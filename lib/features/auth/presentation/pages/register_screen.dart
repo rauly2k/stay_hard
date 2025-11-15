@@ -19,12 +19,36 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   bool _obscureConfirmPassword = true;
   bool _acceptedTerms = false;
 
+  // Password requirement states
+  bool _hasMinLength = false;
+  bool _hasUppercase = false;
+  bool _hasNumber = false;
+  bool _hasSpecialChar = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen to password changes to update requirements
+    _passwordController.addListener(_updatePasswordRequirements);
+  }
+
   @override
   void dispose() {
+    _passwordController.removeListener(_updatePasswordRequirements);
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  void _updatePasswordRequirements() {
+    final password = _passwordController.text;
+    setState(() {
+      _hasMinLength = password.length >= 8;
+      _hasUppercase = RegExp(r'[A-Z]').hasMatch(password);
+      _hasNumber = RegExp(r'[0-9]').hasMatch(password);
+      _hasSpecialChar = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password);
+    });
   }
 
   void _showErrorSnackBar(String message) {
@@ -141,21 +165,32 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                 // Logo and title
                 Center(
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'SH',
-                        style: theme.textTheme.headlineLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'SH',
+                              style: theme.textTheme.headlineLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -229,6 +264,59 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                   ),
                   validator: _validatePassword,
+                  onChanged: (_) {
+                    // Trigger state update for password requirements
+                  },
+                ),
+
+                const SizedBox(height: 12),
+
+                // Password requirements
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Password must contain:',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildPasswordRequirement(
+                        'At least 8 characters',
+                        _hasMinLength,
+                        theme,
+                      ),
+                      const SizedBox(height: 4),
+                      _buildPasswordRequirement(
+                        'At least 1 uppercase letter (A-Z)',
+                        _hasUppercase,
+                        theme,
+                      ),
+                      const SizedBox(height: 4),
+                      _buildPasswordRequirement(
+                        'At least 1 number (0-9)',
+                        _hasNumber,
+                        theme,
+                      ),
+                      const SizedBox(height: 4),
+                      _buildPasswordRequirement(
+                        'At least 1 special character (!@#\$%^&*)',
+                        _hasSpecialChar,
+                        theme,
+                      ),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 16),
@@ -399,6 +487,31 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPasswordRequirement(String text, bool isMet, ThemeData theme) {
+    return Row(
+      children: [
+        Icon(
+          isMet ? Icons.check_circle : Icons.radio_button_unchecked,
+          size: 16,
+          color: isMet ? Colors.green : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: isMet
+                ? theme.colorScheme.onSurface
+                : theme.colorScheme.onSurfaceVariant,
+              decoration: isMet ? TextDecoration.lineThrough : null,
+              decorationColor: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
