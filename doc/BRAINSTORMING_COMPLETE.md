@@ -270,7 +270,7 @@ Splash Screen (1.5-2s minimum)
   ↓
 Check Auth Token
   ↓
-If Not Authenticated → Auth Screen
+If Not Authenticated → 3 Steps App presentation Screen where user gets shown some info about app -> Auth Screen
 If Authenticated + No Onboarding → Onboarding Flow
 If Authenticated + Onboarding Complete → Home Screen
 ```
@@ -290,10 +290,9 @@ If Authenticated + Onboarding Complete → Home Screen
 **Flow Stages:**
 
 #### Stage 1: Welcome & Introduction (3-4 screens)
-- Screen 1: App branding, tagline, "Get Started" CTA
-- Screen 2: Key benefits with icons (AI matching, alarms, focus mode, analytics)
-- Screen 3: Privacy & permissions explanation
-- Swipeable PageView with progress indicators
+- Screen 1: Screen with logo in the middle, text Welcome to StayHard tap anywhere to continue
+- Screen 2: Screen with logo in the middle, text Ready to start your life reset journey? Answer a few quick questions to get your personialized transformation program. Button let's begin
+- Screen 3: A screen with questions (6 of them and answers predefined where user can respond)
 
 #### Stage 2: AI Questionnaire for Habit Matching
 **Questionnaire-based AI matching using Gemini 2.5 Flash**
@@ -318,35 +317,11 @@ If Authenticated + Onboarding Complete → Home Screen
 **Habit Template Library (20 templates across 5 profiles):**
 
 **Profile 1: Foundation (Basic Self-Care)**
-1. Wake up at consistent time
-2. Drink water (8 glasses/day)
-3. Quality sleep (7-8 hours)
-4. Healthy breakfast
-
 **Profile 2: Body (Physical Health)**
-5. Morning workout
-6. Evening walk/jog
-7. Stretching routine
-8. Meal prep
-9. Track calories/macros
-
 **Profile 3: Mind (Mental Health & Learning)**
-10. Daily meditation
-11. Reading (30 min)
-12. Journaling
-13. Learn new skill (Duolingo, course, etc.)
-14. Practice gratitude
-
 **Profile 4: Discipline (Productivity & Focus)**
-15. Deep work session (Pomodoro)
-16. Plan tomorrow's tasks
-17. Limit social media
-18. No phone before bed
-19. Cold shower
-
 **Profile 5: Social & Creative**
-20. Connect with friend/family
-(Additional templates can be added)
+
 
 #### Stage 3: AI Habit Recommendations
 - Display AI-recommended habits
@@ -441,7 +416,6 @@ final authServiceProvider = Provider<AuthService>((ref) {
 ### 4. Habits Module (Core Feature)
 
 **Purpose:** Full CRUD operations for user habits, completion tracking, templates
-
 **Data Model - Habit Entity:**
 
 ```dart
