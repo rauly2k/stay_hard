@@ -11,12 +11,15 @@ import 'features/auth/presentation/pages/register_screen.dart';
 import 'features/home/presentation/pages/home_screen.dart';
 import 'features/onboarding/presentation/pages/info_slides_screen.dart';
 import 'features/splash/presentation/pages/splash_screen.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(
     const ProviderScope(
