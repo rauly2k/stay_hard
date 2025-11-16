@@ -331,39 +331,43 @@ class GoalDetailPage extends ConsumerWidget {
                       else
                         Consumer(
                           builder: (context, ref, child) {
-                            final linkedHabitsAsync = ref.watch(linkedHabitsProvider(goalId));
-                            return linkedHabitsAsync.when(
-                              data: (habits) {
-                                return Column(
-                                  children: habits.map((habit) {
-                                    final completionService = ref.read(habitCompletionProvider);
-                                    final isCompleted = completionService.isHabitCompleted(
-                                      habit,
-                                      DateTime.now(),
-                                    );
-                                    return ListTile(
-                                      leading: Icon(
-                                        isCompleted ? Icons.check_circle : Icons.circle_outlined,
-                                        color: isCompleted
-                                            ? const Color(0xFF90BE6D)
-                                            : theme.colorScheme.onSurfaceVariant,
-                                      ),
-                                      title: Text(habit.description),
-                                      trailing: IconButton(
-                                        icon: const Icon(Icons.close, size: 20),
-                                        onPressed: () {
-                                          ref.read(goalFormProvider.notifier).unlinkHabit(
-                                                goalId,
-                                                habit.id,
-                                              );
-                                        },
-                                      ),
-                                    );
-                                  }).toList(),
+                            final linkedHabits = ref.watch(linkedHabitsProvider(goalId));
+
+                            if (linkedHabits.isEmpty) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+
+                            return Column(
+                              children: linkedHabits.map((habit) {
+                                final completionService = ref.read(habitCompletionProvider);
+                                final isCompleted = completionService.isHabitCompleted(
+                                  habit,
+                                  DateTime.now(),
                                 );
-                              },
-                              loading: () => const Center(child: CircularProgressIndicator()),
-                              error: (_, __) => const Text('Error loading habits'),
+                                return ListTile(
+                                  leading: Icon(
+                                    isCompleted ? Icons.check_circle : Icons.circle_outlined,
+                                    color: isCompleted
+                                        ? const Color(0xFF90BE6D)
+                                        : theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                  title: Text(habit.description),
+                                  trailing: IconButton(
+                                    icon: const Icon(Icons.close, size: 20),
+                                    onPressed: () {
+                                      ref.read(goalFormProvider.notifier).unlinkHabit(
+                                            goalId,
+                                            habit.id,
+                                          );
+                                    },
+                                  ),
+                                );
+                              }).toList(),
                             );
                           },
                         ),

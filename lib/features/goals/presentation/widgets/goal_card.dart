@@ -27,8 +27,12 @@ class GoalCard extends ConsumerWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => GoalDetailPage(goalId: goal.id),
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  GoalDetailPage(goalId: goal.id),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return child; // No hero animation
+              },
             ),
           );
         },
