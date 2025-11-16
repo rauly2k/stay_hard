@@ -21,10 +21,11 @@ class AlarmsScreen extends ConsumerWidget {
         data: (alarms) {
           if (alarms.isEmpty) {
             return AIEmptyState(
+              pageType: 'alarms',
               icon: Icons.alarm,
               title: 'No alarms set',
               subtitle: 'Create your first alarm to start building discipline',
-              actionLabel: 'Create Alarm',
+              actionText: 'Create Alarm',
               onActionPressed: () => _navigateToCreateAlarm(context),
             );
           }

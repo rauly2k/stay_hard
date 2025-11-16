@@ -29,11 +29,15 @@ class AlarmService {
         assetAudioPath: alarmModel.sound.assetPath,
         loopAudio: true,
         vibrate: alarmModel.vibrate,
-        volume: 0.8,
-        fadeDuration: 3.0,
-        notificationTitle: alarmModel.label,
-        notificationBody: 'Time to wake up!',
-        enableNotificationOnKill: true,
+        volumeSettings: VolumeSettings.fade(
+          fadeDuration: const Duration(seconds: 3),
+          volume: 0.8,
+        ),
+        notificationSettings: NotificationSettings(
+          title: alarmModel.label,
+          body: 'Time to wake up!',
+          stopButton: 'Stop',
+        ),
       );
 
       // Schedule the alarm
@@ -68,12 +72,12 @@ class AlarmService {
   }
 
   /// Check if an alarm is currently ringing
-  static bool isRinging(int alarmId) {
-    return Alarm.hasAlarm(alarmId);
+  static Future<bool> isRinging(int alarmId) async {
+    return await Alarm.isRinging(alarmId);
   }
 
   /// Get stream of ringing alarms
-  static Stream<int> get ringStream => Alarm.ringStream.stream;
+  static Stream<AlarmSettings> get ringStream => Alarm.ringStream.stream;
 
   /// Calculate next alarm time based on alarm configuration
   DateTime? _calculateNextAlarmTime(AlarmModel alarmModel, DateTime now) {

@@ -31,22 +31,25 @@ final alarmByIdProvider = FutureProvider.family<AlarmModel?, String>((ref, alarm
   return repository.getAlarmById(alarmId);
 });
 
-/// StateNotifier for alarm operations
-class AlarmNotifier extends StateNotifier<AsyncValue<void>> {
-  final AlarmRepository _repository;
-  final AlarmService _alarmService;
-
-  AlarmNotifier(this._repository, this._alarmService) : super(const AsyncValue.data(null));
+/// Notifier for alarm operations
+class AlarmNotifier extends Notifier<AsyncValue<void>> {
+  @override
+  AsyncValue<void> build() {
+    return const AsyncValue.data(null);
+  }
 
   Future<void> createAlarm(AlarmModel alarm) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
+      final repository = ref.read(alarmRepositoryProvider);
+      final alarmService = ref.read(alarmServiceProvider);
+
       // Save to Firestore
-      await _repository.createAlarm(alarm);
+      await repository.createAlarm(alarm);
 
       // Schedule the alarm using alarm package
       if (alarm.isEnabled) {
-        await _alarmService.scheduleAlarm(alarm);
+        await alarmService.scheduleAlarm(alarm);
       }
     });
   }
@@ -54,38 +57,47 @@ class AlarmNotifier extends StateNotifier<AsyncValue<void>> {
   Future<void> updateAlarm(AlarmModel alarm) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
+      final repository = ref.read(alarmRepositoryProvider);
+      final alarmService = ref.read(alarmServiceProvider);
+
       // Update in Firestore
-      await _repository.updateAlarm(alarm);
+      await repository.updateAlarm(alarm);
 
       // Update the scheduled alarm
-      await _alarmService.updateAlarm(alarm);
+      await alarmService.updateAlarm(alarm);
     });
   }
 
   Future<void> deleteAlarm(String alarmId) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
+      final repository = ref.read(alarmRepositoryProvider);
+      final alarmService = ref.read(alarmServiceProvider);
+
       // Cancel the scheduled alarm
-      await _alarmService.cancelAlarm(alarmId);
+      await alarmService.cancelAlarm(alarmId);
 
       // Delete from Firestore
-      await _repository.deleteAlarm(alarmId);
+      await repository.deleteAlarm(alarmId);
     });
   }
 
   Future<void> toggleAlarm(String alarmId, bool isEnabled) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
+      final repository = ref.read(alarmRepositoryProvider);
+      final alarmService = ref.read(alarmServiceProvider);
+
       // Update in Firestore
-      await _repository.toggleAlarm(alarmId, isEnabled);
+      await repository.toggleAlarm(alarmId, isEnabled);
 
       // Get the updated alarm to reschedule or cancel
-      final alarm = await _repository.getAlarmById(alarmId);
+      final alarm = await repository.getAlarmById(alarmId);
       if (alarm != null) {
         if (isEnabled) {
-          await _alarmService.scheduleAlarm(alarm);
+          await alarmService.scheduleAlarm(alarm);
         } else {
-          await _alarmService.cancelAlarm(alarmId);
+          await alarmService.cancelAlarm(alarmId);
         }
       }
     });
@@ -93,8 +105,6 @@ class AlarmNotifier extends StateNotifier<AsyncValue<void>> {
 }
 
 /// Provider for AlarmNotifier
-final alarmNotifierProvider = StateNotifierProvider<AlarmNotifier, AsyncValue<void>>((ref) {
-  final repository = ref.watch(alarmRepositoryProvider);
-  final alarmService = ref.watch(alarmServiceProvider);
-  return AlarmNotifier(repository, alarmService);
+final alarmNotifierProvider = NotifierProvider<AlarmNotifier, AsyncValue<void>>(() {
+  return AlarmNotifier();
 });

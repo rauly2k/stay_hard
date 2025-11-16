@@ -41,6 +41,36 @@ service cloud.firestore {
       }
     }
 
+    // ROOT-LEVEL Habits collection
+    match /habits/{habitId} {
+      // Allow users to read their own habits
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      // Allow users to create habits with their own userId
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      // Allow users to update/delete their own habits
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // ROOT-LEVEL Goals collection
+    match /goals/{goalId} {
+      // Allow users to read their own goals
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      // Allow users to create goals with their own userId
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      // Allow users to update/delete their own goals
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // ROOT-LEVEL Alarms collection
+    match /alarms/{alarmId} {
+      // Allow users to read their own alarms
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      // Allow users to create alarms with their own userId
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      // Allow users to update/delete their own alarms
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
     // Habit templates collection (read-only for all authenticated users)
     match /habit_templates/{templateId} {
       allow read: if isAuthenticated();

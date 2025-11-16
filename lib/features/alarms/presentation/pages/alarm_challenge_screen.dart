@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:alarm/alarm.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/data/models/alarm_model.dart';
@@ -155,8 +154,8 @@ class _AlarmChallengeScreenState extends State<AlarmChallengeScreen> {
     final now = DateTime.now();
     final quote = _motivationalQuotes[_random.nextInt(_motivationalQuotes.length)];
 
-    return WillPopScope(
-      onWillPop: () async => false, // Prevent back navigation
+    return PopScope(
+      canPop: false, // Prevent back navigation
       child: Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(
