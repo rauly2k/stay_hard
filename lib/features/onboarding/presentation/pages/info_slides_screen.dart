@@ -18,22 +18,22 @@ class _InfoSlidesScreenState extends ConsumerState<InfoSlidesScreen> {
     OnboardingSlide(
       title: "Win Your Morning",
       subtitle: "Hard-to-dismiss alarms that ensure you never oversleep again",
-      imagePath: "assets/images/onboarding_1.png",
+      imagePath: "assets/images/test.png",
     ),
     OnboardingSlide(
       title: "Build Unbreakable Discipline",
       subtitle: "Habit tracking system with smart reminders and streaks",
-      imagePath: "assets/images/onboarding_2.png",
+      imagePath: "assets/images/test.png",
     ),
     OnboardingSlide(
       title: "Smart Habits, with AI",
       subtitle: "AI coaching that adapts to your progress and motivates you",
-      imagePath: "assets/images/onboarding_3.png",
+      imagePath: "assets/images/test.png",
     ),
     OnboardingSlide(
       title: "Let's Go!",
       subtitle: "Start building the discipline you've always wanted",
-      imagePath: "assets/images/onboarding_4.png",
+      imagePath: "assets/images/test.png",
     ),
   ];
 

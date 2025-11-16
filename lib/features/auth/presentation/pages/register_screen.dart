@@ -110,11 +110,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       }
     });
 
-    // Listen to auth stream to navigate to home when logged in
+    // Listen to auth stream to navigate to user onboarding when registered
     ref.listen<AsyncValue<dynamic>>(authStateProvider, (previous, next) {
       next.whenData((user) {
         if (user != null && mounted) {
-          context.go('/home');
+          context.go('/user-onboarding');
         }
       });
     });

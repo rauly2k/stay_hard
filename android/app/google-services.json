@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "354041009676",
+    "project_id": "stay-hardlast",
+    "storage_bucket": "stay-hardlast.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354041009676:android:418e0c9e32ce437c868029",
+        "android_client_info": {
+          "package_name": "com.example.stay_hard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "354041009676-jd28jhgjkvr1iteg9f32drcl27k6kmhc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAu0ifWc5Hv7jGXNKWUEDV3RrTqEH5jVMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "354041009676-jd28jhgjkvr1iteg9f32drcl27k6kmhc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
