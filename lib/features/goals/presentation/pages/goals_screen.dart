@@ -78,8 +78,12 @@ class GoalsScreen extends ConsumerWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const CreateGoalPage(),
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  const CreateGoalPage(),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return child; // No hero animation
+              },
             ),
           );
         },

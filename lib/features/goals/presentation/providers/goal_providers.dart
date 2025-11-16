@@ -198,30 +198,26 @@ class GoalProgress {
 }
 
 /// Provider for habits linked to a specific goal
-final linkedHabitsProvider = StreamProvider.autoDispose.family<List<Habit>, String>((ref, goalId) {
+final linkedHabitsProvider = Provider.autoDispose.family<List<Habit>, String>((ref, goalId) {
   final goalAsync = ref.watch(goalByIdProvider(goalId));
+  final today = DateTime.now();
+  final habitsAsync = ref.watch(habitsForDateProvider(today));
 
   return goalAsync.when(
     data: (goal) {
       if (goal == null || goal.habitIds.isEmpty) {
-        return Stream.value([]);
+        return [];
       }
-
-      // Get today's habits and filter by the linked habit IDs
-      final today = DateTime.now();
-      final habitsAsync = ref.watch(habitsForDateProvider(today));
 
       return habitsAsync.when(
         data: (habits) {
-          return Stream.value(
-            habits.where((habit) => goal.habitIds.contains(habit.id)).toList(),
-          );
+          return habits.where((habit) => goal.habitIds.contains(habit.id)).toList();
         },
-        loading: () => Stream.value([]),
-        error: (_, __) => Stream.value([]),
+        loading: () => [],
+        error: (_, __) => [],
       );
     },
-    loading: () => Stream.value([]),
-    error: (_, __) => Stream.value([]),
+    loading: () => [],
+    error: (_, __) => [],
   );
 });
