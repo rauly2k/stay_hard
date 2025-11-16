@@ -60,8 +60,8 @@ class _HeroGraphicState extends ConsumerState<HeroGraphic>
     final stats = ref.watch(habitStatsProvider(widget.selectedDate));
 
     return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(24),
+      margin: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -87,16 +87,16 @@ class _HeroGraphicState extends ConsumerState<HeroGraphic>
             animation: _progressAnimation,
             builder: (context, child) {
               return CustomPaint(
-                size: const Size(120, 120),
+                size: const Size(90, 90),
                 painter: CircularProgressPainter(
                   progress: _progressAnimation.value * (stats.percentage / 100),
                   backgroundColor: Colors.white.withValues(alpha: 0.2),
                   foregroundColor: Colors.white,
-                  strokeWidth: 12,
+                  strokeWidth: 9,
                 ),
                 child: SizedBox(
-                  width: 120,
-                  height: 120,
+                  width: 90,
+                  height: 90,
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -106,14 +106,14 @@ class _HeroGraphicState extends ConsumerState<HeroGraphic>
                           style: theme.textTheme.displaySmall?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
-                            fontSize: 32,
+                            fontSize: 24,
                           ),
                         ),
                         Text(
                           'Complete',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: Colors.white.withValues(alpha: 0.9),
-                            fontSize: 12,
+                            fontSize: 9,
                           ),
                         ),
                       ],
@@ -124,7 +124,7 @@ class _HeroGraphicState extends ConsumerState<HeroGraphic>
             },
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
 
           // Stats Row
           Row(
@@ -138,7 +138,7 @@ class _HeroGraphicState extends ConsumerState<HeroGraphic>
               ),
               Container(
                 width: 1,
-                height: 40,
+                height: 30,
                 color: Colors.white.withValues(alpha: 0.3),
               ),
               _buildStatItem(
@@ -149,7 +149,7 @@ class _HeroGraphicState extends ConsumerState<HeroGraphic>
               ),
               Container(
                 width: 1,
-                height: 40,
+                height: 30,
                 color: Colors.white.withValues(alpha: 0.3),
               ),
               _buildStatItem(
@@ -176,23 +176,23 @@ class _HeroGraphicState extends ConsumerState<HeroGraphic>
         Icon(
           icon,
           color: Colors.white,
-          size: 20,
+          size: 15,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 3),
         Text(
           value,
           style: theme.textTheme.titleLarge?.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w700,
-            fontSize: 20,
+            fontSize: 15,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 1.5),
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
             color: Colors.white.withValues(alpha: 0.9),
-            fontSize: 11,
+            fontSize: 8,
           ),
         ),
       ],

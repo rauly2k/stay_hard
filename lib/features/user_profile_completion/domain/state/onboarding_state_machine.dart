@@ -193,12 +193,10 @@ class OnboardingStateMachine extends Notifier<OnboardingState> {
         'onboardingCompletedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
-      // Save habits
+      // Save habits to top-level habits collection
       if (state.configuredHabits != null) {
         for (final habit in state.configuredHabits!) {
           final habitRef = FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
               .collection('habits')
               .doc(habit.id);
           batch.set(habitRef, habit.toJson());
