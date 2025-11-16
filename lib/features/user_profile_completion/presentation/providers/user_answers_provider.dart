@@ -2,8 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/questionnaire_models.dart';
 
 /// Notifier for user questionnaire answers
-class UserAnswersNotifier extends StateNotifier<UserAnswers> {
-  UserAnswersNotifier() : super(const UserAnswers());
+class UserAnswersNotifier extends Notifier<UserAnswers> {
+  @override
+  UserAnswers build() {
+    return const UserAnswers();
+  }
 
   /// Save answer for a specific question
   void saveAnswer(String questionId, dynamic value) {
@@ -26,6 +29,4 @@ class UserAnswersNotifier extends StateNotifier<UserAnswers> {
 
 /// Provider for user answers
 final userAnswersProvider =
-    StateNotifierProvider<UserAnswersNotifier, UserAnswers>((ref) {
-  return UserAnswersNotifier();
-});
+    NotifierProvider<UserAnswersNotifier, UserAnswers>(UserAnswersNotifier.new);

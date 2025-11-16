@@ -32,44 +32,22 @@ class OnboardingRouter extends ConsumerWidget {
     );
 
     // Show appropriate page based on current step
-    switch (state.currentStep) {
-      case OnboardingStep.intro:
-        return const IntroPage();
-
-      case OnboardingStep.questionnaire:
-        return const QuestionnairePage();
-
-      case OnboardingStep.loading:
-        return const LoadingPage();
-
-      case OnboardingStep.programRecommendation:
-        return const ProgramRecommendationPage();
-
-      case OnboardingStep.browsePrograms:
-        return const BrowseProgramsPage();
-
-      case OnboardingStep.customProgram:
-        return const CustomProgramPage();
-
-      case OnboardingStep.habitConfiguration:
-        return const HabitConfigurationPage();
-
-      case OnboardingStep.nameInput:
-        return const NameInputPage();
-
-      case OnboardingStep.notificationPermission:
-        return const NotificationPermissionPage();
-
-      case OnboardingStep.commitmentMessage:
-        return const CommitmentMessagePage();
-
-      case OnboardingStep.complete:
-        // Navigating in listener above
-        return const Scaffold(
+    return switch (state.currentStep) {
+      OnboardingStep.intro => const IntroPage(),
+      OnboardingStep.questionnaire => const QuestionnairePage(),
+      OnboardingStep.loading => const LoadingPage(),
+      OnboardingStep.programRecommendation => const ProgramRecommendationPage(),
+      OnboardingStep.browsePrograms => const BrowseProgramsPage(),
+      OnboardingStep.customProgram => const CustomProgramPage(),
+      OnboardingStep.habitConfiguration => const HabitConfigurationPage(),
+      OnboardingStep.nameInput => const NameInputPage(),
+      OnboardingStep.notificationPermission => const NotificationPermissionPage(),
+      OnboardingStep.commitmentMessage => const CommitmentMessagePage(),
+      OnboardingStep.complete => const Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
           ),
-        );
-    }
+        ),
+    };
   }
 }

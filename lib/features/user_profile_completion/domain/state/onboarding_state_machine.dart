@@ -70,8 +70,11 @@ class OnboardingState {
 }
 
 /// Onboarding state machine notifier
-class OnboardingStateMachine extends StateNotifier<OnboardingState> {
-  OnboardingStateMachine() : super(const OnboardingState());
+class OnboardingStateMachine extends Notifier<OnboardingState> {
+  @override
+  OnboardingState build() {
+    return const OnboardingState();
+  }
 
   /// Complete intro slides (Parts 1 & 2)
   void completeIntro() {
@@ -258,6 +261,5 @@ class OnboardingStateMachine extends StateNotifier<OnboardingState> {
 
 /// Provider for onboarding state machine
 final onboardingStateMachineProvider =
-    StateNotifierProvider<OnboardingStateMachine, OnboardingState>((ref) {
-  return OnboardingStateMachine();
-});
+    NotifierProvider<OnboardingStateMachine, OnboardingState>(
+        OnboardingStateMachine.new);
