@@ -11,6 +11,7 @@ import 'features/auth/presentation/pages/register_screen.dart';
 import 'features/home/presentation/pages/home_screen.dart';
 import 'features/onboarding/presentation/pages/info_slides_screen.dart';
 import 'features/splash/presentation/pages/splash_screen.dart';
+import 'features/user_profile_completion/presentation/pages/onboarding_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,6 +81,12 @@ final _router = GoRouter(
           builder: (context, state) => const ForgotPasswordScreen(),
         ),
       ],
+    ),
+
+    // User Profile Completion / Onboarding Flow
+    GoRoute(
+      path: '/user-onboarding',
+      builder: (context, state) => const OnboardingRouter(),
     ),
 
     // Home Screen
