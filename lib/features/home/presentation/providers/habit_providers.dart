@@ -21,6 +21,34 @@ class SelectedDateNotifier extends Notifier<DateTime> {
   }
 }
 
+/// Provider for all active habits (not date-filtered)
+final allActiveHabitsProvider = StreamProvider.autoDispose<List<Habit>>(
+  (ref) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return Stream.value([]);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('habits')
+        .where('userId', isEqualTo: user.uid)
+        .where('isActive', isEqualTo: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) {
+            try {
+              return Habit.fromJson(doc.data());
+            } catch (e) {
+              return null;
+            }
+          })
+          .whereType<Habit>()
+          .toList();
+    });
+  },
+);
+
 /// Provider for habits for a specific date
 final habitsForDateProvider = StreamProvider.autoDispose.family<List<Habit>, DateTime>(
   (ref, date) {

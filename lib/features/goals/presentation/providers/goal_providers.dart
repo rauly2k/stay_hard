@@ -200,8 +200,7 @@ class GoalProgress {
 /// Provider for habits linked to a specific goal
 final linkedHabitsProvider = Provider.autoDispose.family<List<Habit>, String>((ref, goalId) {
   final goalAsync = ref.watch(goalByIdProvider(goalId));
-  final today = DateTime.now();
-  final habitsAsync = ref.watch(habitsForDateProvider(today));
+  final habitsAsync = ref.watch(allActiveHabitsProvider);
 
   return goalAsync.when(
     data: (goal) {

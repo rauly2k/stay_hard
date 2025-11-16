@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../home/presentation/providers/habit_providers.dart';
+import '../../../user_profile_completion/constants/habit_templates.dart';
 import '../../../../shared/data/models/habit_model.dart';
 import '../providers/goal_providers.dart';
 
@@ -91,8 +92,7 @@ class _CreateGoalPageState extends ConsumerState<CreateGoalPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final today = DateTime.now();
-    final habitsAsync = ref.watch(habitsForDateProvider(today));
+    final habitsAsync = ref.watch(allActiveHabitsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -313,6 +313,10 @@ class _HabitCheckboxTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final template = HabitTemplates.findById(habit.templateId);
+    final habitName = template?.name ?? 'Unknown Habit';
+    final habitIcon = template?.icon ?? Icons.check_circle;
+    final habitColor = template?.color ?? theme.colorScheme.primary;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -342,9 +346,24 @@ class _HabitCheckboxTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
+          // Habit Icon
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: habitColor.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              habitIcon,
+              color: habitColor,
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
-              habit.description,
+              habitName,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
