@@ -4,12 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/data/models/habit_model.dart';
 
 /// Provider for currently selected date (defaults to today)
-final selectedDateProvider = StateNotifierProvider<SelectedDateNotifier, DateTime>(
-  (ref) => SelectedDateNotifier(),
+final selectedDateProvider = NotifierProvider<SelectedDateNotifier, DateTime>(
+  SelectedDateNotifier.new,
 );
 
-class SelectedDateNotifier extends StateNotifier<DateTime> {
-  SelectedDateNotifier() : super(DateTime.now());
+class SelectedDateNotifier extends Notifier<DateTime> {
+  @override
+  DateTime build() => DateTime.now();
 
   void setDate(DateTime date) {
     state = date;
@@ -108,6 +109,8 @@ class HabitCompletionService {
           .doc(habitId)
           .update({'completionLog': updatedLog});
     } catch (e) {
+      // Log error for debugging
+      // ignore: avoid_print
       print('Error toggling habit completion: $e');
       rethrow;
     }
@@ -125,12 +128,13 @@ class HabitCompletionService {
 }
 
 /// Provider for habit form/CRUD operations
-final habitFormProvider = StateNotifierProvider<HabitFormNotifier, AsyncValue<void>>(
-  (ref) => HabitFormNotifier(),
+final habitFormProvider = NotifierProvider<HabitFormNotifier, AsyncValue<void>>(
+  HabitFormNotifier.new,
 );
 
-class HabitFormNotifier extends StateNotifier<AsyncValue<void>> {
-  HabitFormNotifier() : super(const AsyncValue.data(null));
+class HabitFormNotifier extends Notifier<AsyncValue<void>> {
+  @override
+  AsyncValue<void> build() => const AsyncValue.data(null);
 
   Future<void> saveHabit(Habit habit) async {
     state = const AsyncValue.loading();
@@ -176,7 +180,7 @@ final habitStatsProvider = Provider.autoDispose.family<HabitStats, DateTime>(
         );
       },
       loading: () => const HabitStats(total: 0, completed: 0, percentage: 0),
-      error: (_, __) => const HabitStats(total: 0, completed: 0, percentage: 0),
+      error: (_, _) => const HabitStats(total: 0, completed: 0, percentage: 0),
     );
   },
 );

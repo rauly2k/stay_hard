@@ -9,6 +9,7 @@ class HabitTemplates {
     name: 'Drink Water',
     detail: 'Stay hydrated throughout the day (minimum 2L)',
     icon: Icons.local_drink,
+    color: Color(0xFF2196F3), // Blue
     category: HabitCategory.foundation,
     configType: HabitConfigType.quantity,
     defaultUnit: 'glasses',
@@ -20,6 +21,7 @@ class HabitTemplates {
     name: 'Read 10 Pages',
     detail: 'Read at least 10 pages of a book daily',
     icon: Icons.menu_book,
+    color: Color(0xFF9C27B0), // Purple
     category: HabitCategory.mental,
     configType: HabitConfigType.quantity,
     defaultUnit: 'pages',
@@ -31,6 +33,7 @@ class HabitTemplates {
     name: 'Plan Top 3 Tasks',
     detail: 'Plan your top 3 tasks for tomorrow',
     icon: Icons.assignment,
+    color: Color(0xFF607D8B), // Blue Grey
     category: HabitCategory.discipline,
     configType: HabitConfigType.none,
   );
@@ -40,6 +43,7 @@ class HabitTemplates {
     name: 'Exercise',
     detail: 'Any physical activity: gym, walk, run, etc.',
     icon: Icons.fitness_center,
+    color: Color(0xFFFF5722), // Deep Orange
     category: HabitCategory.physical,
     configType: HabitConfigType.duration,
     defaultValue: 30,
@@ -50,6 +54,7 @@ class HabitTemplates {
     name: 'Meditate',
     detail: 'Practice mindfulness or meditation',
     icon: Icons.self_improvement,
+    color: Color(0xFF673AB7), // Deep Purple
     category: HabitCategory.mental,
     configType: HabitConfigType.duration,
     defaultValue: 10,
@@ -60,6 +65,7 @@ class HabitTemplates {
     name: 'No Phone (First 30 Min)',
     detail: 'No phone for the first 30 minutes after waking up',
     icon: Icons.phone_disabled,
+    color: Color(0xFF795548), // Brown
     category: HabitCategory.discipline,
     configType: HabitConfigType.none,
   );
@@ -69,6 +75,7 @@ class HabitTemplates {
     name: 'Gratitude Practice',
     detail: 'Write down 3 things you\'re grateful for',
     icon: Icons.favorite,
+    color: Color(0xFFE91E63), // Pink
     category: HabitCategory.mental,
     configType: HabitConfigType.none,
   );
@@ -79,6 +86,7 @@ class HabitTemplates {
     name: 'Deep Work Session',
     detail: 'Complete one 90-minute uninterrupted work block',
     icon: Icons.work,
+    color: Color(0xFF3F51B5), // Indigo
     category: HabitCategory.discipline,
     configType: HabitConfigType.duration,
     defaultValue: 90,
@@ -89,6 +97,7 @@ class HabitTemplates {
     name: 'No Social Media (Focus)',
     detail: 'No social media until Top 3 tasks are complete',
     icon: Icons.block,
+    color: Color(0xFF9E9E9E), // Grey
     category: HabitCategory.discipline,
     configType: HabitConfigType.none,
   );
@@ -98,6 +107,7 @@ class HabitTemplates {
     name: 'Learn a Skill',
     detail: 'Dedicate time to focused practice or study',
     icon: Icons.school,
+    color: Color(0xFF00BCD4), // Cyan
     category: HabitCategory.mental,
     configType: HabitConfigType.duration,
     defaultValue: 30,
@@ -108,6 +118,7 @@ class HabitTemplates {
     name: 'Wake Up (No Snooze)',
     detail: 'Get out of bed immediately when alarm rings',
     icon: Icons.alarm,
+    color: Color(0xFFFFC107), // Amber
     category: HabitCategory.discipline,
     configType: HabitConfigType.time,
   );
@@ -117,6 +128,7 @@ class HabitTemplates {
     name: 'Intense Exercise',
     detail: '30+ minutes of high-intensity physical activity',
     icon: Icons.fitness_center,
+    color: Color(0xFFF44336), // Red
     category: HabitCategory.physical,
     configType: HabitConfigType.duration,
     defaultValue: 30,
@@ -127,6 +139,7 @@ class HabitTemplates {
     name: 'No Processed Sugar',
     detail: 'Avoid processed sugars and sugary drinks',
     icon: Icons.block,
+    color: Color(0xFFFF9800), // Orange
     category: HabitCategory.physical,
     configType: HabitConfigType.none,
   );
@@ -136,6 +149,7 @@ class HabitTemplates {
     name: 'Journal',
     detail: 'Journaling to process thoughts and emotions',
     icon: Icons.edit_note,
+    color: Color(0xFF8BC34A), // Light Green
     category: HabitCategory.mental,
     configType: HabitConfigType.duration,
     defaultValue: 10,
@@ -146,6 +160,7 @@ class HabitTemplates {
     name: 'Make Your Bed',
     detail: 'Make your bed immediately after waking up',
     icon: Icons.bed,
+    color: Color(0xFF009688), // Teal
     category: HabitCategory.foundation,
     configType: HabitConfigType.none,
   );
@@ -155,6 +170,7 @@ class HabitTemplates {
     name: 'No Junk Food',
     detail: 'Choose long-term health over short-term pleasure',
     icon: Icons.no_meals,
+    color: Color(0xFF4CAF50), // Green
     category: HabitCategory.physical,
     configType: HabitConfigType.none,
   );
@@ -164,6 +180,7 @@ class HabitTemplates {
     name: 'No Alcohol',
     detail: 'The hard choice for mental clarity and physical health',
     icon: Icons.local_bar_outlined,
+    color: Color(0xFFCDDC39), // Lime
     category: HabitCategory.physical,
     configType: HabitConfigType.none,
   );
@@ -173,6 +190,7 @@ class HabitTemplates {
     name: 'No Addictions',
     detail: 'Stay free from harmful addictions',
     icon: Icons.block,
+    color: Color(0xFF757575), // Grey 600
     category: HabitCategory.lifestyle,
     configType: HabitConfigType.none,
   );
@@ -182,6 +200,7 @@ class HabitTemplates {
     name: 'Embrace the Suck',
     detail: 'Voluntarily do one physically uncomfortable thing',
     icon: Icons.ac_unit,
+    color: Color(0xFF03A9F4), // Light Blue
     category: HabitCategory.physical,
     configType: HabitConfigType.none,
   );
@@ -191,6 +210,7 @@ class HabitTemplates {
     name: 'Practice Self-Care',
     detail: 'The disciplined act of maintaining yourself',
     icon: Icons.spa,
+    color: Color(0xFFE1BEE7), // Purple 100
     category: HabitCategory.lifestyle,
     configType: HabitConfigType.duration,
     defaultValue: 15,
@@ -201,6 +221,7 @@ class HabitTemplates {
     name: 'Visualization',
     detail: '5 minutes of visualizing success or a perfect day',
     icon: Icons.visibility,
+    color: Color(0xFF7E57C2), // Deep Purple 400
     category: HabitCategory.mental,
     configType: HabitConfigType.duration,
     defaultValue: 5,
@@ -211,6 +232,7 @@ class HabitTemplates {
     name: 'Remember Your "Why"',
     detail: 'A 1-minute review of your core motivation',
     icon: Icons.favorite_border,
+    color: Color(0xFFEC407A), // Pink 400
     category: HabitCategory.mental,
     configType: HabitConfigType.none,
   );
@@ -220,6 +242,7 @@ class HabitTemplates {
     name: 'Give Back / Be Kind',
     detail: 'Practice humility and connection with others',
     icon: Icons.volunteer_activism,
+    color: Color(0xFFFF7043), // Deep Orange 400
     category: HabitCategory.lifestyle,
     configType: HabitConfigType.none,
   );

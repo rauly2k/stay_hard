@@ -24,6 +24,7 @@ class HabitTemplate {
   final String name;
   final String detail;
   final IconData icon;
+  final Color color;
   final HabitCategory category;
   final HabitConfigType configType;
   final String? defaultUnit; // For quantity type (e.g., "glasses", "pages")
@@ -34,6 +35,7 @@ class HabitTemplate {
     required this.name,
     required this.detail,
     required this.icon,
+    required this.color,
     required this.category,
     required this.configType,
     this.defaultUnit,
