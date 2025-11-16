@@ -124,6 +124,9 @@ class ProgramTemplates {
 
   /// Analyze questionnaire responses and recommend a program
   static String recommendProgram(Map<String, dynamic> responses) {
+    print('🤖 ========== AI ANALYSIS STARTED ==========');
+    print('📊 Analyzing user responses to recommend the best program...\n');
+
     // Extract answers
     final chapterTitle = responses['chapter_title'] as String?;
     final futureVision = responses['future_vision'] as String?;
@@ -131,6 +134,15 @@ class ProgramTemplates {
     final morningMindset = responses['morning_mindset'] as String?;
     final struggles = responses['current_struggles'] as List?;
     final ageGroup = responses['age_group'] as String?;
+
+    print('📋 User Responses:');
+    print('  • Chapter Title: $chapterTitle');
+    print('  • Future Vision: $futureVision');
+    print('  • Accomplishment Feeling: $accomplishment');
+    print('  • Morning Mindset: $morningMindset');
+    print('  • Current Struggles: $struggles');
+    print('  • Age Group: $ageGroup');
+    print('');
 
     // Score each program
     final scores = {
@@ -141,93 +153,121 @@ class ProgramTemplates {
       'pioneer': 0,
     };
 
+    print('🔍 Calculating profile scores...\n');
+
     // Profile 5: Pioneer (Age-based, checked first)
     if (ageGroup == '13 - 17' || ageGroup == '18 - 24') {
       scores['pioneer'] = scores['pioneer']! + 10;
+      print('  ✓ Pioneer: +10 (Young age group)');
     }
 
     // Profile 1: Phoenix
     if (chapterTitle == 'The Great Reset' ||
         chapterTitle == 'Building from the Ashes') {
       scores['phoenix'] = scores['phoenix']! + 3;
+      print('  ✓ Phoenix: +3 (Starting from difficulty/reset)');
     }
     if (accomplishment == 'It feels like a distant echo from the past.' ||
         accomplishment == 'I have to search hard to remember the feeling.' ||
         accomplishment == 'I\'m here because I need to feel it again.') {
       scores['phoenix'] = scores['phoenix']! + 3;
+      print('  ✓ Phoenix: +3 (Past accomplishments feel distant)');
     }
     if (morningMindset == 'The fear of staying stuck where I am.' ||
         morningMindset == 'It feels more like a battle than a push.') {
       scores['phoenix'] = scores['phoenix']! + 2;
+      print('  ✓ Phoenix: +2 (Fear of being stuck/battle mindset)');
     }
     if (struggles != null &&
         (struggles.contains('Lost in a fog without a map') ||
             struggles.contains('Running on empty with no fuel left') ||
             struggles.contains('Adrift at sea without an anchor'))) {
       scores['phoenix'] = scores['phoenix']! + 2;
+      print('  ✓ Phoenix: +2 (Feeling lost/empty/adrift)');
     }
 
     // Profile 2: Architect
     if (chapterTitle == 'Forging the Hero' || chapterTitle == 'The Ascent') {
       scores['architect'] = scores['architect']! + 3;
+      print('  ✓ Architect: +3 (Building/ascending mindset)');
     }
     if (futureVision == 'To build a legacy that outlasts me.' ||
         futureVision == 'To conquer my goals and build my vision.') {
       scores['architect'] = scores['architect']! + 3;
+      print('  ✓ Architect: +3 (Legacy/vision-driven)');
     }
     if (morningMindset == 'The promises I\'ve made to myself.') {
       scores['architect'] = scores['architect']! + 2;
+      print('  ✓ Architect: +2 (Self-promise driven)');
     }
     if (struggles != null &&
         struggles.contains('Carrying a weight I can\'t put down')) {
       scores['architect'] = scores['architect']! + 2;
+      print('  ✓ Architect: +2 (Carrying responsibility)');
     }
 
     // Profile 3: Operator
     if (chapterTitle == 'Declaring War on Mediocrity' ||
         chapterTitle == 'Forging the Hero') {
       scores['operator'] = scores['operator']! + 3;
+      print('  ✓ Operator: +3 (War on mediocrity/hero mindset)');
     }
     if (futureVision ==
         'To become the strongest version of myself, period.') {
       scores['operator'] = scores['operator']! + 3;
+      print('  ✓ Operator: +3 (Peak performance focus)');
     }
     if (accomplishment == 'The feeling is still fresh and motivating me.') {
       scores['operator'] = scores['operator']! + 3;
+      print('  ✓ Operator: +3 (Recent accomplishment driving)');
     }
     if (morningMindset == 'The opportunity to compete and win the day.') {
       scores['operator'] = scores['operator']! + 3;
+      print('  ✓ Operator: +3 (Competitive mindset)');
     }
 
     // Profile 4: Stoic Path
     if (chapterTitle == 'Reclaiming the Narrative') {
       scores['stoic_path'] = scores['stoic_path']! + 3;
+      print('  ✓ Stoic Path: +3 (Reclaiming narrative)');
     }
     if (futureVision ==
         'To live a life without what-ifs or regrets.') {
       scores['stoic_path'] = scores['stoic_path']! + 3;
+      print('  ✓ Stoic Path: +3 (No regrets philosophy)');
     }
     if (morningMindset == 'The pressure to perform and not fall behind.' ||
         morningMindset == 'It feels more like a battle than a push.') {
       scores['stoic_path'] = scores['stoic_path']! + 2;
+      print('  ✓ Stoic Path: +2 (Internal pressure/battle)');
     }
     if (struggles != null &&
         (struggles.contains('Fighting an invisible, internal battle') ||
             struggles
                 .contains('Watching my own life from the sidelines'))) {
       scores['stoic_path'] = scores['stoic_path']! + 3;
+      print('  ✓ Stoic Path: +3 (Internal battle/watching from sidelines)');
     }
 
     // Find the program with the highest score
     String recommendedId = 'phoenix'; // Default fallback
     int maxScore = 0;
 
+    print('\n📈 Final Profile Scores:');
     scores.forEach((programId, score) {
+      final programName = findById(programId)?.name ?? programId;
+      print('  • $programName: $score points');
       if (score > maxScore) {
         maxScore = score;
         recommendedId = programId;
       }
     });
+
+    final recommendedProgram = findById(recommendedId);
+    print('\n🎯 RECOMMENDATION: ${recommendedProgram?.name ?? recommendedId}');
+    print('   Score: $maxScore points');
+    print('   "${recommendedProgram?.tagline ?? ''}"');
+    print('🤖 ========== AI ANALYSIS COMPLETE ==========\n');
 
     return recommendedId;
   }

@@ -43,6 +43,7 @@ class HabitConfigurationService {
     int defaultMinutes,
   ) async {
     int selectedMinutes = defaultMinutes;
+    int currentMinutes = 0;
 
     return showDialog<Map<String, dynamic>>(
       context: context,
@@ -53,29 +54,72 @@ class HabitConfigurationService {
 
             return AlertDialog(
               title: Text('Configure $habitName'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'How many minutes per day?',
-                    style: theme.textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 24),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [10, 15, 20, 30, 45, 60, 90].map((minutes) {
-                      final isSelected = selectedMinutes == minutes;
-                      return ChoiceChip(
-                        label: Text('$minutes min'),
-                        selected: isSelected,
-                        onSelected: (_) {
-                          setState(() => selectedMinutes = minutes);
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ],
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'What\'s your current level?',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'How many minutes do you currently do?',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [0, 5, 10, 15, 20, 30].map((minutes) {
+                        final isSelected = currentMinutes == minutes;
+                        return ChoiceChip(
+                          label: Text(minutes == 0 ? 'None' : '$minutes min'),
+                          selected: isSelected,
+                          onSelected: (_) {
+                            setState(() => currentMinutes = minutes);
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 24),
+                    const Divider(),
+                    const SizedBox(height: 16),
+                    Text(
+                      'What\'s your goal?',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'How many minutes per day do you want to reach?',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [10, 15, 20, 30, 45, 60, 90].map((minutes) {
+                        final isSelected = selectedMinutes == minutes;
+                        return ChoiceChip(
+                          label: Text('$minutes min'),
+                          selected: isSelected,
+                          onSelected: (_) {
+                            setState(() => selectedMinutes = minutes);
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(
@@ -86,6 +130,7 @@ class HabitConfigurationService {
                   onPressed: () {
                     Navigator.pop(context, {
                       'duration_minutes': selectedMinutes,
+                      'current_level': currentMinutes,
                     });
                   },
                   child: const Text('Confirm'),
@@ -106,6 +151,7 @@ class HabitConfigurationService {
     String unit,
   ) async {
     int selectedQuantity = defaultQuantity;
+    int currentQuantity = 0;
 
     return showDialog<Map<String, dynamic>>(
       context: context,
@@ -116,38 +162,90 @@ class HabitConfigurationService {
 
             return AlertDialog(
               title: Text('Configure $habitName'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'How many $unit per day?',
-                    style: theme.textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: selectedQuantity > 1
-                            ? () => setState(() => selectedQuantity--)
-                            : null,
-                        icon: const Icon(Icons.remove_circle_outline),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'What\'s your current level?',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
-                      const SizedBox(width: 16),
-                      Text(
-                        '$selectedQuantity',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'How many $unit do you currently do?',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: currentQuantity > 0
+                              ? () => setState(() => currentQuantity--)
+                              : null,
+                          icon: const Icon(Icons.remove_circle_outline),
                         ),
+                        const SizedBox(width: 16),
+                        Text(
+                          '$currentQuantity',
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        IconButton(
+                          onPressed: () => setState(() => currentQuantity++),
+                          icon: const Icon(Icons.add_circle_outline),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    const Divider(),
+                    const SizedBox(height: 16),
+                    Text(
+                      'What\'s your goal?',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
-                      const SizedBox(width: 16),
-                      IconButton(
-                        onPressed: () => setState(() => selectedQuantity++),
-                        icon: const Icon(Icons.add_circle_outline),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'How many $unit per day do you want to reach?',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: selectedQuantity > 1
+                              ? () => setState(() => selectedQuantity--)
+                              : null,
+                          icon: const Icon(Icons.remove_circle_outline),
+                        ),
+                        const SizedBox(width: 16),
+                        Text(
+                          '$selectedQuantity',
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        IconButton(
+                          onPressed: () => setState(() => selectedQuantity++),
+                          icon: const Icon(Icons.add_circle_outline),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(
@@ -159,6 +257,7 @@ class HabitConfigurationService {
                     Navigator.pop(context, {
                       'target_quantity': selectedQuantity,
                       'unit': unit,
+                      'current_level': currentQuantity,
                     });
                   },
                   child: const Text('Confirm'),

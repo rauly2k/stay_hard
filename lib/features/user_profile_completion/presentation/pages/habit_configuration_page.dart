@@ -594,9 +594,14 @@ class _HabitConfigurationPageState
     if (config.containsKey('time')) {
       return 'Set to ${config['time']}';
     } else if (config.containsKey('duration_minutes')) {
-      return '${config['duration_minutes']} minutes';
+      final current = config['current_level'] ?? 0;
+      final goal = config['duration_minutes'];
+      return 'Current: $current min → Goal: $goal min';
     } else if (config.containsKey('target_quantity')) {
-      return '${config['target_quantity']} ${config['unit']}';
+      final current = config['current_level'] ?? 0;
+      final goal = config['target_quantity'];
+      final unit = config['unit'];
+      return 'Current: $current $unit → Goal: $goal $unit';
     }
     return 'Configured';
   }
