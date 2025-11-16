@@ -1,0 +1,61 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      // Allow users to read and write their own user document
+      allow read, write: if isOwner(userId);
+
+      // Habits subcollection
+      match /habits/{habitId} {
+        // Allow users to read and write their own habits
+        allow read, write: if isOwner(userId);
+      }
+
+      // Daily logs subcollection (for habit completion tracking)
+      match /daily_logs/{logId} {
+        // Allow users to read and write their own daily logs
+        allow read, write: if isOwner(userId);
+      }
+
+      // Progress subcollection (for tracking habit progress over time)
+      match /progress/{progressId} {
+        // Allow users to read and write their own progress data
+        allow read, write: if isOwner(userId);
+      }
+
+      // Allow any other subcollections the user might need
+      match /{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Habit templates collection (read-only for all authenticated users)
+    match /habit_templates/{templateId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admins should write templates (add admin rules if needed)
+    }
+
+    // Program templates collection (read-only for all authenticated users)
+    match /program_templates/{templateId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admins should write templates (add admin rules if needed)
+    }
+
+    // Deny all other access by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
