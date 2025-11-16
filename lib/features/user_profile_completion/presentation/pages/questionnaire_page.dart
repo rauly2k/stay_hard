@@ -38,13 +38,10 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
         } else {
           // Questionnaire complete - use state machine to trigger AI analysis
           final userAnswers = ref.read(userAnswersProvider);
-          // Convert Map<String, dynamic> to Map<String, String>
-          final answers = userAnswers.responses.map(
-            (key, value) => MapEntry(key, value.toString()),
-          );
+          // Pass responses directly without conversion
           ref
               .read(onboardingStateMachineProvider.notifier)
-              .completeQuestionnaire(answers);
+              .completeQuestionnaire(userAnswers.responses);
         }
       }
     });
