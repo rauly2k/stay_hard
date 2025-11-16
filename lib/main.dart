@@ -8,10 +8,10 @@ import 'features/auth/presentation/pages/auth_gate_screen.dart';
 import 'features/auth/presentation/pages/forgot_password_screen.dart';
 import 'features/auth/presentation/pages/login_screen.dart';
 import 'features/auth/presentation/pages/register_screen.dart';
-import 'features/home/presentation/pages/home_screen.dart';
 import 'features/onboarding/presentation/pages/info_slides_screen.dart';
 import 'features/splash/presentation/pages/splash_screen.dart';
 import 'features/user_profile_completion/presentation/pages/onboarding_router.dart';
+import 'shared/presentation/widgets/main_shell.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,10 +89,10 @@ final _router = GoRouter(
       builder: (context, state) => const OnboardingRouter(),
     ),
 
-    // Home Screen
+    // Home Screen (Main Shell with Bottom Navigation)
     GoRoute(
       path: '/home',
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => const MainShell(),
     ),
   ],
 
