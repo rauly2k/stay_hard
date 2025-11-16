@@ -82,7 +82,7 @@ class OnboardingStateMachine extends Notifier<OnboardingState> {
   }
 
   /// Complete questionnaire (Part 3)
-  void completeQuestionnaire(Map<String, String> responses) {
+  void completeQuestionnaire(Map<String, dynamic> responses) {
     state = state.copyWith(
       questionnaireResponses: responses,
       currentStep: OnboardingStep.loading,
