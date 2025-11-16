@@ -1,3 +1,4 @@
+import 'package:alarm/alarm.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/data/models/alarm_model.dart';
 import '../../data/repositories/alarm_repository.dart';
@@ -11,6 +12,11 @@ final alarmRepositoryProvider = Provider<AlarmRepository>((ref) {
 /// Provider for AlarmService instance
 final alarmServiceProvider = Provider<AlarmService>((ref) {
   return AlarmService();
+});
+
+/// Provider for listening to ringing alarms
+final ringingAlarmProvider = StreamProvider<AlarmSettings?>((ref) {
+  return AlarmService.ringStream;
 });
 
 /// Provider for all alarms stream

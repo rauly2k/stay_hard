@@ -554,7 +554,7 @@ class _AlarmChallengeScreenState extends State<AlarmChallengeScreen> {
 
     // Navigate back to home
     if (mounted) {
-      context.go('/');
+      context.go('/home');
     }
   }
 }
