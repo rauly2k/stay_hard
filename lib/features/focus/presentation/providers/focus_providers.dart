@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../../data/repositories/focus_repository.dart';
 import '../../domain/services/app_blocking_service.dart';
 import '../../../../shared/data/models/focus_session_model.dart';
@@ -50,12 +51,12 @@ final usageStatsPermissionProvider = FutureProvider<bool>((ref) async {
 });
 
 /// State notifier for focus session management
-class FocusSessionNotifier extends StateNotifier<AsyncValue<void>> {
-  final FocusRepository _repository;
-  final AppBlockingService _appBlockingService;
+class FocusSessionNotifier extends Notifier<AsyncValue<void>> {
+  @override
+  AsyncValue<void> build() => const AsyncValue.data(null);
 
-  FocusSessionNotifier(this._repository, this._appBlockingService)
-      : super(const AsyncValue.data(null));
+  FocusRepository get _repository => ref.read(focusRepositoryProvider);
+  AppBlockingService get _appBlockingService => ref.read(appBlockingServiceProvider);
 
   /// Create a new focus session
   Future<void> createSession(FocusSession session) async {
@@ -165,12 +166,9 @@ class FocusSessionNotifier extends StateNotifier<AsyncValue<void>> {
 
 /// Provider for focus session notifier
 final focusSessionNotifierProvider =
-    StateNotifierProvider<FocusSessionNotifier, AsyncValue<void>>((ref) {
-  return FocusSessionNotifier(
-    ref.watch(focusRepositoryProvider),
-    ref.watch(appBlockingServiceProvider),
-  );
-});
+    NotifierProvider<FocusSessionNotifier, AsyncValue<void>>(
+  FocusSessionNotifier.new,
+);
 
 /// Provider for selected blocked apps (for UI state)
 final selectedBlockedAppsProvider =

@@ -313,7 +313,7 @@ class _BlockedAppsSelectorSheetState
               const SizedBox(height: 16),
             ],
           );
-        }).toList(),
+        }),
 
         // Other apps
         const Divider(),
@@ -329,8 +329,7 @@ class _BlockedAppsSelectorSheetState
         ...apps
             .where((app) => !categories.values
                 .any((packages) => packages.contains(app.packageName)))
-            .map((app) => _buildAppTile(theme, app))
-            .toList(),
+            .map((app) => _buildAppTile(theme, app)),
       ],
     );
   }

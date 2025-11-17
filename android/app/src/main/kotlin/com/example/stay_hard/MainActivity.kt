@@ -121,8 +121,9 @@ class MainActivity : FlutterActivity() {
         val appsList = mutableListOf<Map<String, String>>()
 
         for (packageInfo in packages) {
-            // Filter out system apps if needed
-            if ((packageInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0) {
+            // Include all apps (both system and user apps) except the launcher
+            // Filter out apps without a launch intent (background services, etc.)
+            if (packageManager.getLaunchIntentForPackage(packageInfo.packageName) != null) {
                 val appInfo = mapOf(
                     "packageName" to packageInfo.packageName,
                     "name" to packageManager.getApplicationLabel(packageInfo).toString(),

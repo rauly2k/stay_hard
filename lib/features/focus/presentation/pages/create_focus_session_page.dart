@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/data/models/focus_session_model.dart';
+import '../../domain/services/app_blocking_service.dart';
 import '../providers/focus_providers.dart';
 import '../widgets/blocked_apps_selector_sheet.dart';
 
@@ -450,12 +451,5 @@ class _CreateFocusSessionPageState
         }
       }
     }
-
-    // Reset form
-    _nameController.clear();
-    ref.read(selectedFocusModeProvider.notifier).state = FocusMode.custom;
-    ref.read(sessionDurationProvider.notifier).state = const Duration(minutes: 25);
-    ref.read(selectedBlockedAppsProvider.notifier).state = [];
-    ref.read(blockNotificationsProvider.notifier).state = false;
   }
 }

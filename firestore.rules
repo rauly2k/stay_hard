@@ -71,6 +71,16 @@ service cloud.firestore {
       allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
     }
 
+    // ROOT-LEVEL Focus Sessions collection
+    match /focusSessions/{sessionId} {
+      // Allow users to read their own focus sessions
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      // Allow users to create focus sessions with their own userId
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      // Allow users to update/delete their own focus sessions
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
     // Habit templates collection (read-only for all authenticated users)
     match /habit_templates/{templateId} {
       allow read: if isAuthenticated();

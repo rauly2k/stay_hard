@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../domain/services/app_blocking_service.dart';
 import '../providers/focus_providers.dart';
 
 class PermissionsCheckWidget extends ConsumerWidget {
