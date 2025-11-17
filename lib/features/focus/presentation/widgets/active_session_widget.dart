@@ -216,6 +216,82 @@ class _ActiveSessionWidgetState extends ConsumerState<ActiveSessionWidget>
 
           const SizedBox(height: 24),
 
+          // Focus mode and session info
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.onPrimary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      _getFocusModeIcon(widget.session.mode),
+                      color: theme.colorScheme.onPrimary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      widget.session.mode.displayName,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.schedule,
+                      color: theme.colorScheme.onPrimary.withValues(alpha: 0.8),
+                      size: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Total duration: ${_formatTotalDuration(widget.session.duration)}',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onPrimary.withValues(alpha: 0.9),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.apps,
+                      color: theme.colorScheme.onPrimary.withValues(alpha: 0.8),
+                      size: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '${widget.session.blockedApps.length} apps blocked',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onPrimary.withValues(alpha: 0.9),
+                      ),
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () => _showBlockedAppsDialog(context),
+                      style: TextButton.styleFrom(
+                        foregroundColor: theme.colorScheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      ),
+                      child: const Text('View list'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
           // Stats row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -333,6 +409,84 @@ class _ActiveSessionWidgetState extends ConsumerState<ActiveSessionWidget>
     } else {
       return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     }
+  }
+
+  String _formatTotalDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+
+    if (hours > 0) {
+      return '${hours}h ${minutes}m';
+    } else {
+      return '${minutes}m';
+    }
+  }
+
+  IconData _getFocusModeIcon(FocusMode mode) {
+    switch (mode) {
+      case FocusMode.deepWork:
+        return Icons.workspace_premium;
+      case FocusMode.study:
+        return Icons.school;
+      case FocusMode.bedtime:
+        return Icons.bedtime;
+      case FocusMode.minimalDistraction:
+        return Icons.notifications_off;
+      case FocusMode.custom:
+        return Icons.tune;
+    }
+  }
+
+  void _showBlockedAppsDialog(BuildContext context) async {
+    final appService = ref.read(appBlockingServiceProvider);
+    final installedApps = await appService.getInstalledApps();
+
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Blocked Apps'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: widget.session.blockedApps.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('No apps are currently blocked.'),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.session.blockedApps.length,
+                  itemBuilder: (context, index) {
+                    final packageName = widget.session.blockedApps[index];
+                    final app = installedApps.firstWhere(
+                      (a) => a.packageName == packageName,
+                      orElse: () => InstalledAppInfo(
+                        packageName: packageName,
+                        name: packageName,
+                      ),
+                    );
+
+                    return ListTile(
+                      leading: const Icon(Icons.block, color: Colors.red),
+                      title: Text(app.name),
+                      subtitle: Text(
+                        packageName,
+                        style: const TextStyle(fontSize: 11),
+                      ),
+                      dense: true,
+                    );
+                  },
+                ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _pauseSession() {

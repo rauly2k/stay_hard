@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/data/models/focus_session_model.dart';
 import '../providers/focus_providers.dart';
+import '../widgets/blocking_status_widget.dart';
 
 class FocusHistoryPage extends ConsumerWidget {
   const FocusHistoryPage({super.key});
@@ -16,6 +17,42 @@ class FocusHistoryPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Focus Statistics'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bug_report),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => Dialog(
+                  child: SizedBox(
+                    width: double.maxFinite,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AppBar(
+                          title: const Text('Debug Info'),
+                          automaticallyImplyLeading: false,
+                          actions: [
+                            IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ],
+                        ),
+                        const Expanded(
+                          child: SingleChildScrollView(
+                            child: BlockingStatusWidget(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+            tooltip: 'Debug Info',
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
