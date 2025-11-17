@@ -6,6 +6,7 @@ import '../widgets/focus_session_card.dart';
 import '../widgets/active_session_widget.dart';
 import '../widgets/permissions_check_widget.dart';
 import 'create_focus_session_page.dart';
+import 'focus_history_page.dart';
 
 class FocusScreen extends ConsumerWidget {
   const FocusScreen({super.key});
@@ -207,23 +208,6 @@ class FocusScreen extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// Placeholder for focus history page
-class FocusHistoryPage extends StatelessWidget {
-  const FocusHistoryPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Focus History'),
-      ),
-      body: const Center(
-        child: Text('Focus history and statistics will be shown here'),
       ),
     );
   }
