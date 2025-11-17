@@ -1,6 +1,8 @@
 package com.example.stay_hard
 
 import android.app.AppOpsManager
+import android.app.usage.UsageStats
+import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -19,6 +21,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.ByteArrayOutputStream
+import java.util.Calendar
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.stayhard/app_blocking"
@@ -106,6 +109,21 @@ class MainActivity : FlutterActivity() {
                     } else {
                         result.error("INVALID_ARGS", "Blocked apps list required", null)
                     }
+                }
+
+                "getAppUsageToday" -> {
+                    val packageName = call.argument<String>("packageName")
+                    if (packageName != null) {
+                        val usageSeconds = getAppUsageToday(packageName)
+                        result.success(usageSeconds)
+                    } else {
+                        result.error("INVALID_ARGS", "Package name required", null)
+                    }
+                }
+
+                "getAllAppUsageToday" -> {
+                    val usageMap = getAllAppUsageToday()
+                    result.success(usageMap)
                 }
 
                 else -> {
@@ -208,6 +226,79 @@ class MainActivity : FlutterActivity() {
         intent.data = Uri.parse("package:$packageName")
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
+    }
+
+    /**
+     * Get app usage time in seconds for today for a specific package
+     */
+    private fun getAppUsageToday(packageName: String): Long {
+        if (!hasUsageStatsPermission()) {
+            return 0
+        }
+
+        val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+
+        // Get start of today
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        val startTime = calendar.timeInMillis
+        val endTime = System.currentTimeMillis()
+
+        val usageStatsList = usageStatsManager.queryUsageStats(
+            UsageStatsManager.INTERVAL_DAILY,
+            startTime,
+            endTime
+        )
+
+        var totalTime: Long = 0
+        for (usageStats in usageStatsList) {
+            if (usageStats.packageName == packageName) {
+                totalTime += usageStats.totalTimeInForeground
+            }
+        }
+
+        // Convert milliseconds to seconds
+        return totalTime / 1000
+    }
+
+    /**
+     * Get all app usage times in seconds for today
+     * Returns a map of packageName -> usage seconds
+     */
+    private fun getAllAppUsageToday(): Map<String, Long> {
+        if (!hasUsageStatsPermission()) {
+            return emptyMap()
+        }
+
+        val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+
+        // Get start of today
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        val startTime = calendar.timeInMillis
+        val endTime = System.currentTimeMillis()
+
+        val usageStatsList = usageStatsManager.queryUsageStats(
+            UsageStatsManager.INTERVAL_DAILY,
+            startTime,
+            endTime
+        )
+
+        val usageMap = mutableMapOf<String, Long>()
+        for (usageStats in usageStatsList) {
+            if (usageStats.totalTimeInForeground > 0) {
+                // Convert milliseconds to seconds
+                usageMap[usageStats.packageName] = usageStats.totalTimeInForeground / 1000
+            }
+        }
+
+        return usageMap
     }
 
     override fun onDestroy() {

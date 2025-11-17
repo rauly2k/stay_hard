@@ -101,7 +101,14 @@ class BlockingOverlayActivity : Activity() {
 
     override fun onUserLeaveHint() {
         // User tried to leave (home button, recents, etc.)
-        // Just finish the activity to let them go home
+        // Finish the activity but the accessibility service will continue
+        // to monitor and re-block if they try to open the blocked app again
         finish()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Ensure we're on top when resumed
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 }

@@ -7,6 +7,7 @@ import '../widgets/active_session_widget.dart';
 import '../widgets/permissions_check_widget.dart';
 import 'create_focus_session_page.dart';
 import 'focus_history_page.dart';
+import 'app_time_limits_page.dart';
 
 class FocusScreen extends ConsumerWidget {
   const FocusScreen({super.key});
@@ -24,6 +25,19 @@ class FocusScreen extends ConsumerWidget {
         title: const Text('Focus'),
         centerTitle: true,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.timer_outlined),
+            onPressed: () {
+              // Navigate to app time limits
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AppTimeLimitsPage(),
+                ),
+              );
+            },
+            tooltip: 'App Time Limits',
+          ),
           IconButton(
             icon: const Icon(Icons.history),
             onPressed: () {
