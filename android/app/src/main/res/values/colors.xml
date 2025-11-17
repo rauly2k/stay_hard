@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#FF6B35</color>
+    <color name="blocking_overlay_background">#FAFAFA</color>
+    <color name="blocking_text_primary">#212121</color>
+    <color name="blocking_text_secondary">#757575</color>
+</resources>
