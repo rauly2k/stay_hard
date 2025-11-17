@@ -310,3 +310,138 @@ class FocusStatistics {
     );
   }
 }
+
+/// Model for app time limit configuration
+class AppTimeLimit {
+  final String id;
+  final String userId;
+  final String packageName;
+  final String appName;
+  final Duration dailyLimit; // Maximum time allowed per day
+  final bool isEnabled;
+  final DateTime createdAt;
+  final DateTime? lastModified;
+
+  const AppTimeLimit({
+    required this.id,
+    required this.userId,
+    required this.packageName,
+    required this.appName,
+    required this.dailyLimit,
+    this.isEnabled = true,
+    required this.createdAt,
+    this.lastModified,
+  });
+
+  AppTimeLimit copyWith({
+    String? id,
+    String? userId,
+    String? packageName,
+    String? appName,
+    Duration? dailyLimit,
+    bool? isEnabled,
+    DateTime? createdAt,
+    DateTime? lastModified,
+  }) {
+    return AppTimeLimit(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      packageName: packageName ?? this.packageName,
+      appName: appName ?? this.appName,
+      dailyLimit: dailyLimit ?? this.dailyLimit,
+      isEnabled: isEnabled ?? this.isEnabled,
+      createdAt: createdAt ?? this.createdAt,
+      lastModified: lastModified ?? this.lastModified,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'userId': userId,
+        'packageName': packageName,
+        'appName': appName,
+        'dailyLimitMinutes': dailyLimit.inMinutes,
+        'isEnabled': isEnabled,
+        'createdAt': Timestamp.fromDate(createdAt),
+        'lastModified':
+            lastModified != null ? Timestamp.fromDate(lastModified!) : null,
+      };
+
+  factory AppTimeLimit.fromJson(Map<String, dynamic> json) {
+    return AppTimeLimit(
+      id: json['id'] as String,
+      userId: json['userId'] as String,
+      packageName: json['packageName'] as String,
+      appName: json['appName'] as String,
+      dailyLimit: Duration(minutes: json['dailyLimitMinutes'] as int),
+      isEnabled: json['isEnabled'] as bool? ?? true,
+      createdAt: (json['createdAt'] as Timestamp).toDate(),
+      lastModified: (json['lastModified'] as Timestamp?)?.toDate(),
+    );
+  }
+}
+
+/// Model for tracking daily app usage
+class AppUsageRecord {
+  final String id;
+  final String userId;
+  final String packageName;
+  final DateTime date; // Date of usage (normalized to start of day)
+  final Duration totalUsage; // Total time used on this day
+  final DateTime lastUpdated;
+
+  const AppUsageRecord({
+    required this.id,
+    required this.userId,
+    required this.packageName,
+    required this.date,
+    required this.totalUsage,
+    required this.lastUpdated,
+  });
+
+  /// Check if this record is for today
+  bool get isToday {
+    final now = DateTime.now();
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
+  }
+
+  AppUsageRecord copyWith({
+    String? id,
+    String? userId,
+    String? packageName,
+    DateTime? date,
+    Duration? totalUsage,
+    DateTime? lastUpdated,
+  }) {
+    return AppUsageRecord(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      packageName: packageName ?? this.packageName,
+      date: date ?? this.date,
+      totalUsage: totalUsage ?? this.totalUsage,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'userId': userId,
+        'packageName': packageName,
+        'date': Timestamp.fromDate(date),
+        'totalUsageSeconds': totalUsage.inSeconds,
+        'lastUpdated': Timestamp.fromDate(lastUpdated),
+      };
+
+  factory AppUsageRecord.fromJson(Map<String, dynamic> json) {
+    return AppUsageRecord(
+      id: json['id'] as String,
+      userId: json['userId'] as String,
+      packageName: json['packageName'] as String,
+      date: (json['date'] as Timestamp).toDate(),
+      totalUsage: Duration(seconds: json['totalUsageSeconds'] as int),
+      lastUpdated: (json['lastUpdated'] as Timestamp).toDate(),
+    );
+  }
+}

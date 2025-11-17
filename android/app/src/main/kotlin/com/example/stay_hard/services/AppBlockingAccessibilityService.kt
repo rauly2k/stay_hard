@@ -69,14 +69,16 @@ class AppBlockingAccessibilityService : AccessibilityService() {
 
         val packageName = event.packageName?.toString() ?: return
 
-        // Don't block our own app
-        if (packageName == applicationContext.packageName) {
+        // Don't block our own app or the blocking overlay
+        if (packageName == applicationContext.packageName ||
+            packageName == "com.example.stay_hard") {
             return
         }
 
         // Check if the app should be blocked
         if (blockedApps.contains(packageName)) {
-            // Launch blocking overlay
+            // Launch blocking overlay - this will be triggered repeatedly
+            // as long as the user tries to access the blocked app
             showBlockingOverlay(packageName)
         }
     }
