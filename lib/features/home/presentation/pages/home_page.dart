@@ -12,6 +12,7 @@ import '../../../ai_notifications/presentation/providers/ai_notification_provide
 import '../../../../shared/data/models/goal_model.dart';
 import '../../../../shared/data/models/habit_model.dart';
 import '../../../../shared/presentation/widgets/ai_empty_state.dart';
+import '../../../../shared/presentation/widgets/profile_menu_dropdown.dart';
 import '../providers/habit_providers.dart';
 import '../widgets/add_habit_choice_dialog.dart';
 import '../widgets/enhanced_habit_card.dart';
@@ -194,17 +195,8 @@ class _HomePageState extends ConsumerState<HomePage>
         ),
         backgroundColor: theme.colorScheme.surface,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person_outline),
-            onPressed: () {
-              // Navigate to profile (placeholder for now)
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Profile screen coming soon!')),
-              );
-            },
-            tooltip: 'Profile',
-          ),
+        actions: const [
+          ProfileMenuDropdown(),
         ],
       ),
       body: SafeArea(

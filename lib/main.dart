@@ -17,6 +17,10 @@ import 'features/onboarding/presentation/pages/info_slides_screen.dart';
 import 'features/splash/presentation/pages/splash_screen.dart';
 import 'features/user_profile_completion/presentation/pages/onboarding_router.dart';
 import 'features/ai_notifications/data/models/ai_notification_config.dart';
+import 'features/ai_notifications/data/models/notification_intervention_category.dart';
+import 'features/ai_notifications/data/models/notification_preferences.dart';
+import 'features/ai_notifications/presentation/pages/ai_notifications_settings_page.dart';
+import 'features/ai_notifications/presentation/pages/ai_notifications_testing_page.dart';
 import 'features/home/presentation/pages/edit_habit_page.dart';
 import 'shared/data/models/alarm_model.dart';
 import 'shared/data/models/habit_model.dart';
@@ -38,9 +42,13 @@ void main() async {
   Hive.registerAdapter(NotificationActionAdapter());
   Hive.registerAdapter(AINotificationConfigAdapter());
   Hive.registerAdapter(AINotificationRecordAdapter());
+  Hive.registerAdapter(InterventionCategoryAdapter());
+  Hive.registerAdapter(CategoryPreferencesAdapter());
+  Hive.registerAdapter(NotificationPreferencesAdapter());
 
   // Open Hive boxes
   await Hive.openBox<AINotificationConfig>('aiNotificationConfig');
+  await Hive.openBox<NotificationPreferences>('notificationPreferences');
 
   // Initialize Alarm package
   await Alarm.init();
@@ -221,6 +229,16 @@ final _router = GoRouter(
           alarmModel: alarmModel,
         );
       },
+    ),
+
+    // AI Notifications Routes
+    GoRoute(
+      path: '/ai-notifications/settings',
+      builder: (context, state) => const AINotificationsSettingsPage(),
+    ),
+    GoRoute(
+      path: '/ai-notifications/test',
+      builder: (context, state) => const AINotificationsTestingPage(),
     ),
   ],
 
