@@ -240,7 +240,7 @@ class HabitTemplates {
     id: 'clarity_005',
     name: 'Digital Detox Hour',
     detail: '1+ hour daily completely screen-free',
-    icon: Icons.devices_off,
+    icon: Icons.phonelink_off,
     color: Color(0xFF607D8B), // Blue Grey
     category: HabitCategory.clarity,
     configType: HabitConfigType.duration,

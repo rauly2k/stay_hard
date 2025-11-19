@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:hive/hive.dart';
 import '../../data/models/ai_notification_config.dart';
 import '../../data/repositories/ai_notification_repository_impl.dart';
@@ -34,7 +35,8 @@ final currentUserAIConfigProvider = StreamProvider<AINotificationConfig?>((ref) 
   if (userId == null) {
     return Stream.value(null);
   }
-  return ref.watch(aiNotificationConfigProvider(userId).stream);
+  final repository = ref.watch(aiNotificationRepositoryProvider);
+  return repository.watchConfig(userId);
 });
 
 /// Provider for checking if user has completed AI onboarding
