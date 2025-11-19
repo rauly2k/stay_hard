@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stay_hard/features/focus/presentation/providers/focus_providers.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../shared/data/models/focus_session_model.dart';
 import '../providers/time_limit_providers.dart';
@@ -17,7 +18,7 @@ class _AppTimeLimitsPageState extends ConsumerState<AppTimeLimitsPage> {
   @override
   Widget build(BuildContext context) {
     final timeLimitsAsync = ref.watch(appTimeLimitsProvider);
-    final usageServiceAsync = ref.watch(appUsageTrackingServiceProvider);
+    final usageService = ref.watch(appUsageTrackingServiceProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -39,10 +40,7 @@ class _AppTimeLimitsPageState extends ConsumerState<AppTimeLimitsPage> {
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(appTimeLimitsProvider);
-              final service = usageServiceAsync.value;
-              if (service != null) {
-                await service.syncUsageData();
-              }
+              await usageService.syncUsageData();
             },
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -172,7 +170,7 @@ class _AppTimeLimitCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final usageServiceAsync = ref.watch(appUsageTrackingServiceProvider);
+    final usageService = ref.watch(appUsageTrackingServiceProvider);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -229,49 +227,43 @@ class _AppTimeLimitCard extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 12),
-            usageServiceAsync.when(
-              data: (service) {
-                return FutureBuilder<AppUsageStats>(
-                  future: service.getAppUsageStats(limit.packageName),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const SizedBox.shrink();
-                    }
+            FutureBuilder<AppUsageStats>(
+              future: usageService.getAppUsageStats(limit.packageName),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const SizedBox.shrink();
+                }
 
-                    final stats = snapshot.data!;
-                    return Column(
+                final stats = snapshot.data!;
+                return Column(
+                  children: [
+                    LinearProgressIndicator(
+                      value: stats.usagePercentage / 100,
+                      backgroundColor: Colors.grey[200],
+                      color: stats.isBlocked ? Colors.red : Colors.blue,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        LinearProgressIndicator(
-                          value: stats.usagePercentage / 100,
-                          backgroundColor: Colors.grey[200],
-                          color: stats.isBlocked ? Colors.red : Colors.blue,
+                        Text(
+                          'Used: ${stats.currentUsageFormatted}',
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Used: ${stats.currentUsageFormatted}',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            Text(
-                              stats.isBlocked
-                                  ? 'Blocked'
-                                  : 'Remaining: ${stats.remainingTimeFormatted}',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: stats.isBlocked ? Colors.red : Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ],
+                        Text(
+                          stats.isBlocked
+                              ? 'Blocked'
+                              : 'Remaining: ${stats.remainingTimeFormatted}',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: stats.isBlocked ? Colors.red : Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                       ],
-                    );
-                  },
+                    ),
+                  ],
                 );
               },
-              loading: () => const SizedBox.shrink(),
-              error: (_, __) => const SizedBox.shrink(),
             ),
           ],
         ),
@@ -353,7 +345,7 @@ class _AddTimeLimitDialogState extends ConsumerState<_AddTimeLimitDialog> {
                       );
                     },
                     loading: () => const CircularProgressIndicator(),
-                    error: (_, __) => const Text('Error loading apps'),
+                    error: (_, _) => const Text('Error loading apps'),
                   ),
                   const SizedBox(height: 16),
                 ],

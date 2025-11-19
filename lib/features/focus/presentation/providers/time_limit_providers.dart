@@ -118,7 +118,7 @@ final timeLimitNotifierProvider =
 );
 
 /// Provider for a specific app's usage stats
-Provider<AsyncValue<AppUsageStats>> appUsageStatsProvider(String packageName) {
+FutureProvider<AppUsageStats> appUsageStatsProvider(String packageName) {
   return FutureProvider<AppUsageStats>((ref) async {
     final service = ref.watch(appUsageTrackingServiceProvider);
     return service.getAppUsageStats(packageName);
