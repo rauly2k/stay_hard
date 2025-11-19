@@ -32,6 +32,14 @@ class _AddExtraHabitsSheetState extends State<AddExtraHabitsSheet> {
         .toList();
   }
 
+  Map<HabitCategory, List<HabitTemplate>> get _habitsByCategory {
+    final Map<HabitCategory, List<HabitTemplate>> result = {};
+    for (final habit in _availableHabits) {
+      result.putIfAbsent(habit.category, () => []).add(habit);
+    }
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -88,112 +96,169 @@ class _AddExtraHabitsSheetState extends State<AddExtraHabitsSheet> {
               ),
             ),
 
-            // Habits list
+            // Habits list grouped by category
             Flexible(
               child: ListView.builder(
                 shrinkWrap: true,
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                itemCount: _availableHabits.length,
-                itemBuilder: (context, index) {
-                  final habit = _availableHabits[index];
-                  final isSelected = _selectedIds.contains(habit.id);
+                itemCount: HabitCategory.values.length,
+                itemBuilder: (context, categoryIndex) {
+                  final category = HabitCategory.values[categoryIndex];
+                  final habits = _habitsByCategory[category];
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          if (isSelected) {
-                            _selectedIds.remove(habit.id);
-                          } else {
-                            _selectedIds.add(habit.id);
-                          }
-                        });
-                      },
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? theme.colorScheme.primaryContainer
-                              : theme.colorScheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isSelected
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.outline
-                                    .withValues(alpha: 0.2),
-                            width: isSelected ? 2 : 1,
-                          ),
-                        ),
+                  if (habits == null || habits.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Category header
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16, bottom: 12),
                         child: Row(
                           children: [
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              width: 24,
-                              height: 24,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: isSelected
-                                    ? theme.colorScheme.primary
-                                    : theme.colorScheme.surface,
-                                border: Border.all(
-                                  color: isSelected
-                                      ? theme.colorScheme.primary
-                                      : theme.colorScheme.outline
-                                          .withValues(alpha: 0.5),
-                                  width: 2,
-                                ),
-                              ),
-                              child: isSelected
-                                  ? Icon(
-                                      Icons.check,
-                                      size: 16,
-                                      color: theme.colorScheme.onPrimary,
-                                    )
-                                  : null,
-                            ),
-                            const SizedBox(width: 16),
                             Container(
-                              padding: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.primary
-                                    .withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(8),
+                                color: HabitTemplates.getCategoryColor(category)
+                                    .withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(6),
                               ),
                               child: Icon(
-                                habit.icon,
-                                color: theme.colorScheme.primary,
-                                size: 24,
+                                HabitTemplates.getCategoryIcon(category),
+                                color: HabitTemplates.getCategoryColor(category),
+                                size: 16,
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    habit.name,
-                                    style: theme.textTheme.bodyLarge?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                            const SizedBox(width: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  HabitTemplates.getCategoryDisplayName(category),
+                                  style: theme.textTheme.labelLarge?.copyWith(
+                                    color: HabitTemplates.getCategoryColor(category),
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  Text(
-                                    habit.detail,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.onSurface
-                                          .withValues(alpha: 0.6),
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  HabitTemplates.getCategoryDescription(category),
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onSurface
+                                        .withValues(alpha: 0.6),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                    ),
+
+                      // Habits in this category
+                      ...habits.map((habit) {
+                        final isSelected = _selectedIds.contains(habit.id);
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                if (isSelected) {
+                                  _selectedIds.remove(habit.id);
+                                } else {
+                                  _selectedIds.add(habit.id);
+                                }
+                              });
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? HabitTemplates.getCategoryColor(category)
+                                        .withValues(alpha: 0.1)
+                                    : theme.colorScheme.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? HabitTemplates.getCategoryColor(category)
+                                      : theme.colorScheme.outline
+                                          .withValues(alpha: 0.2),
+                                  width: isSelected ? 2 : 1,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    width: 24,
+                                    height: 24,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: isSelected
+                                          ? HabitTemplates.getCategoryColor(category)
+                                          : theme.colorScheme.surface,
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? HabitTemplates.getCategoryColor(category)
+                                            : theme.colorScheme.outline
+                                                .withValues(alpha: 0.5),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: isSelected
+                                        ? const Icon(
+                                            Icons.check,
+                                            size: 16,
+                                            color: Colors.white,
+                                          )
+                                        : null,
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: HabitTemplates.getCategoryColor(category)
+                                          .withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(
+                                      habit.icon,
+                                      color: HabitTemplates.getCategoryColor(category),
+                                      size: 24,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          habit.name,
+                                          style: theme.textTheme.bodyLarge?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        Text(
+                                          habit.detail,
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            color: theme.colorScheme.onSurface
+                                                .withValues(alpha: 0.6),
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
                   );
                 },
               ),

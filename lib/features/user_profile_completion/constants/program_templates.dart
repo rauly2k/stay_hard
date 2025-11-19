@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../data/models/program_template.dart';
-import 'habit_templates.dart';
 
-/// The 5 program archetypes for personalized onboarding
+/// The 5 program archetypes for personalized onboarding with redesigned habit mappings
 class ProgramTemplates {
   /// Profile 1: "The Phoenix" (The Beginner / Rebuilder)
+  /// 9 habits focused on foundations, small wins, and rebuilding momentum
   static const phoenix = ProgramTemplate(
     id: 'phoenix',
     name: 'The Phoenix',
@@ -14,17 +14,20 @@ class ProgramTemplates {
     icon: Icons.local_fire_department,
     color: Color(0xFFFF6B35), // StayHard Orange
     coreHabitIds: [
-      'make_bed',
-      'drink_water',
-      'no_phone_morning',
-      'exercise',
-      'gratitude',
-      'read_pages',
-      'plan_tasks',
+      'core_001', // Hydrate (2L+ Water)
+      'core_002', // Daily Movement (20+ Min)
+      'core_003', // Read Daily (10+ Pages)
+      'mastery_002', // Make Your Bed
+      'clarity_004', // No Phone Morning
+      'resilience_002', // Gratitude Practice
+      'mastery_003', // Plan Top 3 Tasks
+      'strength_006', // No Junk Food
+      'core_005', // Consistent Sleep Rhythm
     ],
   );
 
   /// Profile 2: "The Architect" (The Visionary Builder)
+  /// 10 habits focused on strategic planning, focused execution, and long-term building
   static const architect = ProgramTemplate(
     id: 'architect',
     name: 'The Architect',
@@ -34,17 +37,21 @@ class ProgramTemplates {
     icon: Icons.architecture,
     color: Color(0xFF277DA1), // Blue
     coreHabitIds: [
-      'wake_up_no_snooze',
-      'plan_tasks',
-      'deep_work',
-      'exercise',
-      'read_pages',
-      'visualization',
-      'drink_water',
+      'core_001', // Hydrate (2L+ Water)
+      'core_003', // Read Daily (10+ Pages)
+      'mastery_001', // Wake Up (No Snooze)
+      'mastery_003', // Plan Top 3 Tasks
+      'clarity_001', // Deep Work Session
+      'strength_002', // Cardio Endurance
+      'resilience_005', // Visualization
+      'legacy_001', // Work on Passion Project
+      'mastery_004', // Time Blocking
+      'legacy_002', // Goal Review
     ],
   );
 
   /// Profile 3: "The Operator" (The High-Performer)
+  /// 12 habits focused on intensity, optimization, and peak performance
   static const operator = ProgramTemplate(
     id: 'operator',
     name: 'The Operator',
@@ -54,17 +61,23 @@ class ProgramTemplates {
     icon: Icons.rocket_launch,
     color: Color(0xFFF94144), // Red/Warning
     coreHabitIds: [
-      'wake_up_no_snooze',
-      'intense_exercise',
-      'deep_work',
-      'no_social_media',
-      'read_pages',
-      'plan_tasks',
-      'embrace_suck',
+      'mastery_001', // Wake Up (No Snooze)
+      'core_001', // Hydrate (2L+ Water)
+      'strength_001', // Intense Training
+      'clarity_001', // Deep Work Session
+      'clarity_003', // No Social Media
+      'core_003', // Read Daily (10+ Pages)
+      'mastery_003', // Plan Top 3 Tasks
+      'resilience_006', // Embrace the Suck
+      'strength_009', // Cold Exposure
+      'clarity_002', // Learn a New Skill
+      'legacy_004', // Skill Mastery
+      'mastery_007', // Track Progress
     ],
   );
 
   /// Profile 4: "The Stoic Path" (The Internal Warrior)
+  /// 10 habits focused on inner work, emotional processing, and mindful awareness
   static const stoicPath = ProgramTemplate(
     id: 'stoic_path',
     name: 'The Stoic Path',
@@ -74,17 +87,21 @@ class ProgramTemplates {
     icon: Icons.psychology,
     color: Color(0xFF90BE6D), // Green/Success
     coreHabitIds: [
-      'meditate',
-      'journal',
-      'gratitude',
-      'read_pages',
-      'exercise',
-      'remember_why',
-      'no_phone_morning',
+      'core_001', // Hydrate (2L+ Water)
+      'core_003', // Read Daily (10+ Pages)
+      'resilience_001', // Meditate
+      'resilience_003', // Journal
+      'resilience_002', // Gratitude Practice
+      'resilience_004', // Remember Your Why
+      'strength_004', // Mobility & Flexibility
+      'clarity_004', // No Phone Morning
+      'core_002', // Daily Movement (20+ Min)
+      'resilience_008', // Breathwork Practice
     ],
   );
 
   /// Profile 5: "The Pioneer" (The Young Founder)
+  /// 10 habits focused on building strong foundations early in life
   static const pioneer = ProgramTemplate(
     id: 'pioneer',
     name: 'The Pioneer',
@@ -94,13 +111,16 @@ class ProgramTemplates {
     icon: Icons.explore,
     color: Color(0xFFFFB703), // Yellow/Amber
     coreHabitIds: [
-      'wake_up_no_snooze',
-      'make_bed',
-      'exercise',
-      'read_pages',
-      'learn_skill',
-      'plan_tasks',
-      'drink_water',
+      'core_001', // Hydrate (2L+ Water)
+      'core_002', // Daily Movement (20+ Min)
+      'core_003', // Read Daily (10+ Pages)
+      'mastery_001', // Wake Up (No Snooze)
+      'mastery_002', // Make Your Bed
+      'strength_002', // Cardio Endurance
+      'clarity_002', // Learn a New Skill
+      'mastery_003', // Plan Top 3 Tasks
+      'resilience_002', // Gratitude Practice
+      'legacy_007', // Learn from Mentors
     ],
   );
 

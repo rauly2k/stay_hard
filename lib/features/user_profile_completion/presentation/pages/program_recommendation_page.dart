@@ -156,62 +156,122 @@ class ProgramRecommendationPage extends ConsumerWidget {
 
                     const SizedBox(height: 16),
 
-                    ...program.coreHabitIds.map((habitId) {
-                      final habitTemplate = HabitTemplates.findById(habitId);
-                      if (habitTemplate == null) return const SizedBox.shrink();
+                    // Group habits by category
+                    ...() {
+                      // Organize habits by category
+                      final habitsByCategory = <HabitCategory, List<HabitTemplate>>{};
 
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: program.color.withValues(alpha: 0.3),
-                              width: 1,
+                      for (final habitId in program.coreHabitIds) {
+                        final habitTemplate = HabitTemplates.findById(habitId);
+                        if (habitTemplate != null) {
+                          habitsByCategory.putIfAbsent(
+                            habitTemplate.category,
+                            () => [],
+                          ).add(habitTemplate);
+                        }
+                      }
+
+                      // Build category sections
+                      final widgets = <Widget>[];
+
+                      for (final category in HabitCategory.values) {
+                        final habits = habitsByCategory[category];
+                        if (habits == null || habits.isEmpty) continue;
+
+                        // Category header
+                        widgets.add(
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16, bottom: 8),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: HabitTemplates.getCategoryColor(category)
+                                        .withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Icon(
+                                    HabitTemplates.getCategoryIcon(category),
+                                    color: HabitTemplates.getCategoryColor(category),
+                                    size: 16,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${HabitTemplates.getCategoryDisplayName(category)} (${HabitTemplates.getCategoryDescription(category)})',
+                                  style: theme.textTheme.labelLarge?.copyWith(
+                                    color: HabitTemplates.getCategoryColor(category),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
+                        );
+
+                        // Habits in this category
+                        for (final habitTemplate in habits) {
+                          widgets.add(
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: program.color.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(8),
+                                  color: theme.colorScheme.surfaceContainerHighest,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: HabitTemplates.getCategoryColor(category)
+                                        .withValues(alpha: 0.3),
+                                    width: 1,
+                                  ),
                                 ),
-                                child: Icon(
-                                  habitTemplate.icon,
-                                  color: program.color,
-                                  size: 24,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                child: Row(
                                   children: [
-                                    Text(
-                                      habitTemplate.name,
-                                      style: theme.textTheme.bodyLarge?.copyWith(
-                                        fontWeight: FontWeight.w600,
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: HabitTemplates.getCategoryColor(category)
+                                            .withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Icon(
+                                        habitTemplate.icon,
+                                        color: HabitTemplates.getCategoryColor(category),
+                                        size: 24,
                                       ),
                                     ),
-                                    Text(
-                                      habitTemplate.detail,
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: theme.colorScheme.onSurface
-                                            .withValues(alpha: 0.6),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            habitTemplate.name,
+                                            style: theme.textTheme.bodyLarge?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          Text(
+                                            habitTemplate.detail,
+                                            style: theme.textTheme.bodySmall?.copyWith(
+                                              color: theme.colorScheme.onSurface
+                                                  .withValues(alpha: 0.6),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
+                            ),
+                          );
+                        }
+                      }
+
+                      return widgets;
+                    }(),
 
                     const SizedBox(height: 100), // Space for buttons
                   ],
