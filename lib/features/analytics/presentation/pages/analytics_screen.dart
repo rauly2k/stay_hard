@@ -23,9 +23,13 @@ class AnalyticsScreen extends ConsumerWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
+          // Invalidate all analytics providers to force recalculation
           ref.invalidate(analyticsStatsProvider);
           ref.invalidate(heatmapDataProvider);
           ref.invalidate(timeOfDayInsightsProvider);
+          ref.invalidate(habitsForDateProvider(today));
+          // Small delay to ensure data is refreshed
+          await Future.delayed(const Duration(milliseconds: 100));
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),

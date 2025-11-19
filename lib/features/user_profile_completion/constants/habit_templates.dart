@@ -302,13 +302,12 @@ class HabitTemplates {
   static const resilience002 = HabitTemplate(
     id: 'resilience_002',
     name: 'Gratitude Practice',
-    detail: 'Write 3+ things you\'re grateful for',
+    detail: 'Practice gratitude and appreciation',
     icon: Icons.favorite,
     color: Color(0xFFE91E63), // Pink
     category: HabitCategory.resilience,
-    configType: HabitConfigType.quantity,
-    defaultUnit: 'items',
-    defaultValue: 3,
+    configType: HabitConfigType.duration,
+    defaultValue: 10,
     tags: ['gratitude', 'mindset', 'appreciation'],
   );
 
@@ -555,8 +554,7 @@ class HabitTemplates {
     icon: Icons.volunteer_activism,
     color: Color(0xFFFF7043), // Deep Orange 400
     category: HabitCategory.legacy,
-    configType: HabitConfigType.duration,
-    defaultValue: 30,
+    configType: HabitConfigType.none,
     tags: ['giving', 'contribution', 'help'],
   );
 

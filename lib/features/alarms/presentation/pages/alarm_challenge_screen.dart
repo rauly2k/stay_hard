@@ -155,7 +155,13 @@ class _AlarmChallengeScreenState extends State<AlarmChallengeScreen> {
     final quote = _motivationalQuotes[_random.nextInt(_motivationalQuotes.length)];
 
     return PopScope(
-      canPop: false, // Prevent back navigation
+      canPop: false, // Prevent back navigation and swipe gestures
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        // Block all pop attempts - user must solve the challenge
+        if (didPop) {
+          return;
+        }
+      },
       child: Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(

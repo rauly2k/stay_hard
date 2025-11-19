@@ -36,7 +36,7 @@ class AlarmService {
         notificationSettings: NotificationSettings(
           title: alarmModel.label,
           body: 'Time to wake up!',
-          stopButton: 'Stop',
+          stopButton: null, // No stop button - force user to solve challenge
         ),
       );
 

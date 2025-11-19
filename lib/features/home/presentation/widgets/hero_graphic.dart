@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/habit_providers.dart';
+import 'compact_heatmap.dart';
 
 class HeroGraphic extends ConsumerStatefulWidget {
   final DateTime selectedDate;
@@ -80,85 +81,106 @@ class _HeroGraphicState extends ConsumerState<HeroGraphic>
           ),
         ],
       ),
-      child: Column(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Circular Progress Ring
-          AnimatedBuilder(
-            animation: _progressAnimation,
-            builder: (context, child) {
-              return CustomPaint(
-                size: const Size(90, 90),
-                painter: CircularProgressPainter(
-                  progress: _progressAnimation.value * (stats.percentage / 100),
-                  backgroundColor: Colors.white.withValues(alpha: 0.2),
-                  foregroundColor: Colors.white,
-                  strokeWidth: 9,
+          // Left Side - Progress and Stats
+          Expanded(
+            child: Column(
+              children: [
+                // Circular Progress Ring
+                AnimatedBuilder(
+                  animation: _progressAnimation,
+                  builder: (context, child) {
+                    return CustomPaint(
+                      size: const Size(90, 90),
+                      painter: CircularProgressPainter(
+                        progress: _progressAnimation.value * (stats.percentage / 100),
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
+                        foregroundColor: Colors.white,
+                        strokeWidth: 9,
+                      ),
+                      child: SizedBox(
+                        width: 90,
+                        height: 90,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '${(stats.percentage * _progressAnimation.value).toInt()}%',
+                                style: theme.textTheme.displaySmall?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 24,
+                                ),
+                              ),
+                              Text(
+                                'Complete',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                  fontSize: 9,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                child: SizedBox(
-                  width: 90,
-                  height: 90,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '${(stats.percentage * _progressAnimation.value).toInt()}%',
-                          style: theme.textTheme.displaySmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 24,
-                          ),
-                        ),
-                        Text(
-                          'Complete',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            fontSize: 9,
-                          ),
-                        ),
-                      ],
+
+                const SizedBox(height: 15),
+
+                // Stats Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildStatItem(
+                      theme,
+                      'Done',
+                      '${stats.completed}',
+                      Icons.check_circle,
                     ),
-                  ),
+                    Container(
+                      width: 1,
+                      height: 30,
+                      color: Colors.white.withValues(alpha: 0.3),
+                    ),
+                    _buildStatItem(
+                      theme,
+                      'Left',
+                      '${stats.total - stats.completed}',
+                      Icons.pending,
+                    ),
+                    Container(
+                      width: 1,
+                      height: 30,
+                      color: Colors.white.withValues(alpha: 0.3),
+                    ),
+                    _buildStatItem(
+                      theme,
+                      'Total',
+                      '${stats.total}',
+                      Icons.checklist,
+                    ),
+                  ],
                 ),
-              );
-            },
+              ],
+            ),
           ),
 
-          const SizedBox(height: 15),
+          // Vertical Divider
+          Container(
+            width: 1,
+            height: 150,
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            color: Colors.white.withValues(alpha: 0.2),
+          ),
 
-          // Stats Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildStatItem(
-                theme,
-                'Completed',
-                '${stats.completed}',
-                Icons.check_circle,
-              ),
-              Container(
-                width: 1,
-                height: 30,
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
-              _buildStatItem(
-                theme,
-                'Remaining',
-                '${stats.total - stats.completed}',
-                Icons.pending,
-              ),
-              Container(
-                width: 1,
-                height: 30,
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
-              _buildStatItem(
-                theme,
-                'Total',
-                '${stats.total}',
-                Icons.checklist,
-              ),
-            ],
+          // Right Side - Heatmap
+          const Expanded(
+            child: CompactHeatmap(),
           ),
         ],
       ),
