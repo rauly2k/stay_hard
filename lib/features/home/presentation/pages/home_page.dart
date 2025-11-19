@@ -15,6 +15,8 @@ import '../widgets/add_habit_choice_dialog.dart';
 import '../widgets/enhanced_habit_card.dart';
 import '../widgets/hero_graphic.dart';
 import '../widgets/horizontal_calendar.dart';
+import 'habit_detail_page.dart';
+import 'edit_habit_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -303,7 +305,11 @@ class _HomePageState extends ConsumerState<HomePage>
         if (userId == null) {
           return ListView.builder(
             padding: const EdgeInsets.symmetric(vertical: 8),
+            physics: const BouncingScrollPhysics(),
             itemCount: filteredHabits.length,
+            cacheExtent: 500,
+            addAutomaticKeepAlives: true,
+            addRepaintBoundaries: true,
             itemBuilder: (context, index) {
               final habit = filteredHabits[index];
               return EnhancedHabitCard(
@@ -311,16 +317,21 @@ class _HomePageState extends ConsumerState<HomePage>
                 selectedDate: ref.watch(selectedDateProvider),
                 linkedGoals: const [],
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Habit detail page coming soon!')),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HabitDetailPage(habit: habit),
+                    ),
                   );
                 },
                 onCompletionChanged: (completed) =>
                     _handleHabitCompletion(habit, completed),
                 onEdit: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Edit habit coming soon!')),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditHabitPage(habit: habit),
+                    ),
                   );
                 },
                 onArchive: () => _handleArchive(habit),
@@ -351,7 +362,11 @@ class _HomePageState extends ConsumerState<HomePage>
 
             return ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
+              physics: const BouncingScrollPhysics(),
               itemCount: filteredHabits.length,
+              cacheExtent: 500,
+              addAutomaticKeepAlives: true,
+              addRepaintBoundaries: true,
               itemBuilder: (context, index) {
                 final habit = filteredHabits[index];
                 final linkedGoals = goals
@@ -363,16 +378,21 @@ class _HomePageState extends ConsumerState<HomePage>
                   selectedDate: ref.watch(selectedDateProvider),
                   linkedGoals: linkedGoals,
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Habit detail page coming soon!')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HabitDetailPage(habit: habit),
+                      ),
                     );
                   },
                   onCompletionChanged: (completed) =>
                       _handleHabitCompletion(habit, completed),
                   onEdit: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Edit habit coming soon!')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditHabitPage(habit: habit),
+                      ),
                     );
                   },
                   onArchive: () => _handleArchive(habit),

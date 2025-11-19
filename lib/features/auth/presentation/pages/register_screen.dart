@@ -39,18 +39,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
-  void _showSuccessSnackBar(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-  }
-
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter a password';
@@ -98,14 +86,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final theme = Theme.of(context);
     final authState = ref.watch(authNotifierProvider);
 
-    // Listen to auth state for error and success messages
+    // Listen to auth state for error messages
     ref.listen<AuthState>(authNotifierProvider, (previous, next) {
       if (next.errorMessage != null) {
         _showErrorSnackBar(next.errorMessage!);
-        ref.read(authNotifierProvider.notifier).clearMessages();
-      }
-      if (next.successMessage != null) {
-        _showSuccessSnackBar(next.successMessage!);
         ref.read(authNotifierProvider.notifier).clearMessages();
       }
     });
@@ -229,6 +213,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                   ),
                   validator: _validatePassword,
+                ),
+
+                const SizedBox(height: 8),
+
+                // Password requirements info
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Text(
+                    'Password must contain at least:\n• 8 characters\n• 1 uppercase letter\n• 1 number\n• 1 special character',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      height: 1.4,
+                    ),
+                  ),
                 ),
 
                 const SizedBox(height: 16),
