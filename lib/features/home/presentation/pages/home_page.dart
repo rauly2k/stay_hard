@@ -7,6 +7,8 @@ import 'package:uuid/uuid.dart';
 import '../../../user_profile_completion/constants/habit_templates.dart';
 import '../../../user_profile_completion/domain/services/habit_configuration_service.dart';
 import '../../../user_profile_completion/presentation/widgets/add_extra_habits_sheet.dart';
+import '../../../ai_notifications/presentation/widgets/ai_onboarding_flow.dart';
+import '../../../ai_notifications/presentation/providers/ai_notification_providers.dart';
 import '../../../../shared/data/models/goal_model.dart';
 import '../../../../shared/data/models/habit_model.dart';
 import '../../../../shared/presentation/widgets/ai_empty_state.dart';
@@ -28,11 +30,44 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage>
     with TickerProviderStateMixin {
   late TabController _tabController;
+  bool _hasCheckedAIOnboarding = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _checkFirstTimeAISetup();
+  }
+
+  Future<void> _checkFirstTimeAISetup() async {
+    if (_hasCheckedAIOnboarding) return;
+
+    // Wait 1.5 seconds for UI to settle
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    if (!mounted) return;
+
+    _hasCheckedAIOnboarding = true;
+
+    final userId = ref.read(currentUserIdProvider);
+    if (userId == null) return;
+
+    try {
+      final repository = ref.read(aiNotificationRepositoryProvider);
+      final config = await repository.getConfig(userId);
+
+      if (config == null && mounted) {
+        // User hasn't set up AI notifications yet
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const AIOnboardingFlow(),
+        );
+      }
+    } catch (e) {
+      // Silently fail - don't block user if AI onboarding fails
+      print('Error checking AI onboarding: $e');
+    }
   }
 
   @override
