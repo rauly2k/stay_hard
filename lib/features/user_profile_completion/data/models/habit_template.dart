@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-/// Habit category for organization
+/// Habit category for organization (6 new categories)
 enum HabitCategory {
-  foundation,
-  physical,
-  mental,
-  discipline,
-  lifestyle,
+  core,        // CORE - Foundation Habits
+  strength,    // STRENGTH - Physical Health
+  clarity,     // CLARITY - Mental Performance
+  resilience,  // RESILIENCE - Emotional Mastery
+  mastery,     // MASTERY - Discipline & Systems
+  legacy,      // LEGACY - Growth & Purpose
 }
 
 /// Type of habit configuration needed
@@ -29,6 +30,7 @@ class HabitTemplate {
   final HabitConfigType configType;
   final String? defaultUnit; // For quantity type (e.g., "glasses", "pages")
   final int? defaultValue; // Default quantity or duration
+  final List<String> tags; // Optional tags for filtering/search
 
   const HabitTemplate({
     required this.id,
@@ -40,6 +42,7 @@ class HabitTemplate {
     required this.configType,
     this.defaultUnit,
     this.defaultValue,
+    this.tags = const [],
   });
 
   /// Check if this habit requires configuration

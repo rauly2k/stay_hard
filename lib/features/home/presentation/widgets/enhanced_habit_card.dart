@@ -190,31 +190,72 @@ class _EnhancedHabitCardState extends ConsumerState<EnhancedHabitCard>
 
                       const SizedBox(height: 4),
 
-                      // Time of Day Chips
+                      // Category Badge and Time of Day Chips
                       Wrap(
                         spacing: 4,
                         runSpacing: 4,
-                        children: widget.habit.timeOfDay.map((timeOfDay) {
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primaryContainer
-                                  .withValues(alpha: 0.5),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              _getTimeOfDayLabel(timeOfDay),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500,
-                                color: theme.colorScheme.onPrimaryContainer,
+                        children: [
+                          // Category Badge
+                          if (template != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: HabitTemplates.getCategoryColor(template.category)
+                                    .withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: HabitTemplates.getCategoryColor(template.category)
+                                      .withValues(alpha: 0.3),
+                                  width: 0.5,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    HabitTemplates.getCategoryIcon(template.category),
+                                    size: 10,
+                                    color: HabitTemplates.getCategoryColor(template.category),
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    HabitTemplates.getCategoryDisplayName(template.category),
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: HabitTemplates.getCategoryColor(template.category),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        }).toList(),
+
+                          // Time of Day Chips
+                          ...widget.habit.timeOfDay.map((timeOfDay) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primaryContainer
+                                    .withValues(alpha: 0.5),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                _getTimeOfDayLabel(timeOfDay),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: theme.colorScheme.onPrimaryContainer,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ],
                       ),
 
                       // Linked Goals Indicator
