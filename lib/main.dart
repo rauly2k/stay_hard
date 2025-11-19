@@ -17,7 +17,9 @@ import 'features/onboarding/presentation/pages/info_slides_screen.dart';
 import 'features/splash/presentation/pages/splash_screen.dart';
 import 'features/user_profile_completion/presentation/pages/onboarding_router.dart';
 import 'features/ai_notifications/data/models/ai_notification_config.dart';
+import 'features/home/presentation/pages/edit_habit_page.dart';
 import 'shared/data/models/alarm_model.dart';
+import 'shared/data/models/habit_model.dart';
 import 'shared/presentation/widgets/main_shell.dart';
 
 void main() async {
@@ -181,6 +183,19 @@ final _router = GoRouter(
     GoRoute(
       path: '/home',
       builder: (context, state) => const MainShell(),
+    ),
+
+    // Habit Edit Route
+    GoRoute(
+      path: '/habit-edit',
+      builder: (context, state) {
+        final habit = state.extra as Habit?;
+        if (habit == null) {
+          // Handle missing habit - redirect to home
+          return const MainShell();
+        }
+        return EditHabitPage(habit: habit);
+      },
     ),
 
     // Alarms Routes
