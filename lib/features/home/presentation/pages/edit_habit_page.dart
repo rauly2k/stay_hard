@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stay_hard/features/user_profile_completion/data/models/habit_template.dart';
 import '../../../../shared/data/models/habit_model.dart';
 import '../../../user_profile_completion/constants/habit_templates.dart';
 import '../providers/habit_providers.dart';

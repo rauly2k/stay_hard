@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stay_hard/features/user_profile_completion/data/models/habit_template.dart';
 import '../../constants/program_templates.dart';
 import '../../constants/habit_templates.dart';
 import '../../domain/state/onboarding_state_machine.dart';
