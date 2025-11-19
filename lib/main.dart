@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'core/theme/app_theme.dart';
 import 'features/alarms/presentation/pages/alarm_challenge_screen.dart';
@@ -15,6 +16,7 @@ import 'features/auth/presentation/pages/register_screen.dart';
 import 'features/onboarding/presentation/pages/info_slides_screen.dart';
 import 'features/splash/presentation/pages/splash_screen.dart';
 import 'features/user_profile_completion/presentation/pages/onboarding_router.dart';
+import 'features/ai_notifications/data/models/ai_notification_config.dart';
 import 'shared/data/models/alarm_model.dart';
 import 'shared/presentation/widgets/main_shell.dart';
 
@@ -23,6 +25,20 @@ void main() async {
 
   // Initialize Firebase
   await Firebase.initializeApp();
+
+  // Initialize Hive
+  await Hive.initFlutter();
+
+  // Register Hive Adapters for AI Notifications
+  Hive.registerAdapter(AIArchetypeAdapter());
+  Hive.registerAdapter(AIIntensityAdapter());
+  Hive.registerAdapter(NotificationScenarioAdapter());
+  Hive.registerAdapter(NotificationActionAdapter());
+  Hive.registerAdapter(AINotificationConfigAdapter());
+  Hive.registerAdapter(AINotificationRecordAdapter());
+
+  // Open Hive boxes
+  await Hive.openBox<AINotificationConfig>('aiNotificationConfig');
 
   // Initialize Alarm package
   await Alarm.init();
