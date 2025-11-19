@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'dart:math' as math;
 
 class HorizontalCalendar extends StatelessWidget {
   final DateTime selectedDate;
@@ -17,26 +18,36 @@ class HorizontalCalendar extends StatelessWidget {
     final today = DateTime.now();
     final List<DateTime> dates = _generateDates(today);
 
-    return SizedBox(
-      height: 90,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        itemCount: dates.length,
-        itemBuilder: (context, index) {
-          final date = dates[index];
-          final isSelected = _isSameDay(date, selectedDate);
-          final isToday = _isSameDay(date, today);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Use 20% of screen height or minimum 120px for better visibility
+        final calendarHeight = math.max(
+          MediaQuery.of(context).size.height * 0.20,
+          120.0,
+        );
 
-          return _buildDateItem(
-            context,
-            theme,
-            date,
-            isSelected: isSelected,
-            isToday: isToday,
-          );
-        },
-      ),
+        return SizedBox(
+          height: calendarHeight,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            itemCount: dates.length,
+            itemBuilder: (context, index) {
+              final date = dates[index];
+              final isSelected = _isSameDay(date, selectedDate);
+              final isToday = _isSameDay(date, today);
+
+              return _buildDateItem(
+                context,
+                theme,
+                date,
+                isSelected: isSelected,
+                isToday: isToday,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -50,8 +61,8 @@ class HorizontalCalendar extends StatelessWidget {
     return GestureDetector(
       onTap: () => onDateSelected(date),
       child: Container(
-        width: 60,
-        margin: const EdgeInsets.symmetric(horizontal: 4),
+        width: 80,
+        margin: const EdgeInsets.symmetric(horizontal: 6),
         decoration: BoxDecoration(
           color: isSelected
               ? theme.colorScheme.primary
@@ -79,7 +90,7 @@ class HorizontalCalendar extends StatelessWidget {
                         ? theme.colorScheme.primary
                         : theme.colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
-                fontSize: 11,
+                fontSize: 14,
               ),
             ),
             const SizedBox(height: 4),

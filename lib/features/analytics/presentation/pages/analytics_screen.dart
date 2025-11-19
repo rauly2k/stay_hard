@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shimmer/shimmer.dart';
 import '../providers/analytics_providers.dart';
 import '../widgets/heatmap_calendar.dart';
 import '../../../home/presentation/providers/habit_providers.dart';
@@ -164,8 +165,13 @@ class AnalyticsScreen extends ConsumerWidget {
                     }).toList(),
                   );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, __) => const SizedBox(),
+                loading: () => _buildHabitAnalysisSkeleton(),
+                error: (error, stack) => Center(
+                  child: Text(
+                    'Error loading habits: ${error.toString()}',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
               ),
               const SizedBox(height: 24),
               // Module 4: Time-of-Day Insights
@@ -480,4 +486,77 @@ class _TimeOfDayBar extends StatelessWidget {
       ],
     );
   }
+}
+
+Widget _buildHabitAnalysisSkeleton() {
+  return Shimmer.fromColors(
+    baseColor: Colors.grey[300]!,
+    highlightColor: Colors.grey[100]!,
+    child: Column(
+      children: List.generate(
+        3,
+        (index) => Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Container(
+                        width: 100,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: 150,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }

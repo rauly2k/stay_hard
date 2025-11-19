@@ -208,88 +208,125 @@ final timeOfDayInsightsProvider = Provider.autoDispose<TimeOfDayInsights>((ref) 
           afternoonRate: 0,
           eveningRate: 0,
           bestTime: 'N/A',
+          totalCompletions: 0,
         );
       }
 
-      // Count completions by time of day
+      int morningCompletions = 0;
+      int afternoonCompletions = 0;
+      int eveningCompletions = 0;
+      int anytimeCompletions = 0;
+
       int morningTotal = 0;
-      int morningCompleted = 0;
       int afternoonTotal = 0;
-      int afternoonCompleted = 0;
       int eveningTotal = 0;
-      int eveningCompleted = 0;
+      int anytimeTotal = 0;
+
+      // Get last 30 days of data for better insights
+      final thirtyDaysAgo = today.subtract(const Duration(days: 30));
 
       for (var habit in habits) {
-        for (var timeOfDay in habit.timeOfDay) {
-          // Check last 30 days
-          for (var i = 0; i < 30; i++) {
-            final date = today.subtract(Duration(days: i));
-            final dateKey = _formatDateKey(date);
-            final isCompleted = habit.completionLog[dateKey] == true;
+        // Count total habits by time preference
+        final habitTimeOfDay = habit.timeOfDay.isNotEmpty ? habit.timeOfDay.first : TimeOfDayEnum.anytime;
 
-            switch (timeOfDay) {
+        switch (habitTimeOfDay) {
+          case TimeOfDayEnum.morning:
+            morningTotal++;
+            break;
+          case TimeOfDayEnum.afternoon:
+            afternoonTotal++;
+            break;
+          case TimeOfDayEnum.evening:
+            eveningTotal++;
+            break;
+          case TimeOfDayEnum.anytime:
+            anytimeTotal++;
+            break;
+        }
+
+        // Count completions in last 30 days
+        for (var i = 0; i < 30; i++) {
+          final date = today.subtract(Duration(days: i));
+          final dateKey = _formatDateKey(date);
+
+          if (habit.completionLog[dateKey] == true) {
+            switch (habitTimeOfDay) {
               case TimeOfDayEnum.morning:
-                morningTotal++;
-                if (isCompleted) morningCompleted++;
+                morningCompletions++;
                 break;
               case TimeOfDayEnum.afternoon:
-                afternoonTotal++;
-                if (isCompleted) afternoonCompleted++;
+                afternoonCompletions++;
                 break;
               case TimeOfDayEnum.evening:
-                eveningTotal++;
-                if (isCompleted) eveningCompleted++;
+                eveningCompletions++;
                 break;
               case TimeOfDayEnum.anytime:
-                // Count as all times
-                morningTotal++;
-                afternoonTotal++;
-                eveningTotal++;
-                if (isCompleted) {
-                  morningCompleted++;
-                  afternoonCompleted++;
-                  eveningCompleted++;
-                }
+                // For anytime habits, count them separately
+                // Don't inflate other time periods
+                anytimeCompletions++;
                 break;
             }
           }
         }
       }
 
-      final morningRate = morningTotal > 0 ? (morningCompleted / morningTotal * 100).round() : 0;
-      final afternoonRate = afternoonTotal > 0 ? (afternoonCompleted / afternoonTotal * 100).round() : 0;
-      final eveningRate = eveningTotal > 0 ? (eveningCompleted / eveningTotal * 100).round() : 0;
+      // Calculate completion rates as percentages
+      // Rate = (completions / (total habits of that type * 30 days)) * 100
+      final morningRate = morningTotal > 0
+          ? ((morningCompletions / (morningTotal * 30)) * 100).round()
+          : 0;
 
-      // Determine best time
-      String bestTime = 'Morning';
-      int highestRate = morningRate;
+      final afternoonRate = afternoonTotal > 0
+          ? ((afternoonCompletions / (afternoonTotal * 30)) * 100).round()
+          : 0;
 
-      if (afternoonRate > highestRate) {
-        bestTime = 'Afternoon';
-        highestRate = afternoonRate;
+      final eveningRate = eveningTotal > 0
+          ? ((eveningCompletions / (eveningTotal * 30)) * 100).round()
+          : 0;
+
+      // Determine best time based on completion rate
+      String bestTime = 'N/A';
+      int maxRate = 0;
+
+      if (morningRate > maxRate) {
+        maxRate = morningRate;
+        bestTime = 'Morning';
       }
-      if (eveningRate > highestRate) {
+      if (afternoonRate > maxRate) {
+        maxRate = afternoonRate;
+        bestTime = 'Afternoon';
+      }
+      if (eveningRate > maxRate) {
+        maxRate = eveningRate;
         bestTime = 'Evening';
       }
 
+      final totalCompletions = morningCompletions +
+                               afternoonCompletions +
+                               eveningCompletions +
+                               anytimeCompletions;
+
       return TimeOfDayInsights(
-        morningRate: morningRate,
-        afternoonRate: afternoonRate,
-        eveningRate: eveningRate,
+        morningRate: morningRate.clamp(0, 100),
+        afternoonRate: afternoonRate.clamp(0, 100),
+        eveningRate: eveningRate.clamp(0, 100),
         bestTime: bestTime,
+        totalCompletions: totalCompletions,
       );
     },
     loading: () => TimeOfDayInsights(
       morningRate: 0,
       afternoonRate: 0,
       eveningRate: 0,
-      bestTime: 'N/A',
+      bestTime: 'Loading...',
+      totalCompletions: 0,
     ),
     error: (_, __) => TimeOfDayInsights(
       morningRate: 0,
       afternoonRate: 0,
       eveningRate: 0,
-      bestTime: 'N/A',
+      bestTime: 'Error',
+      totalCompletions: 0,
     ),
   );
 });
@@ -473,11 +510,13 @@ class TimeOfDayInsights {
   final int afternoonRate;
   final int eveningRate;
   final String bestTime;
+  final int totalCompletions;
 
   TimeOfDayInsights({
     required this.morningRate,
     required this.afternoonRate,
     required this.eveningRate,
     required this.bestTime,
+    required this.totalCompletions,
   });
 }
