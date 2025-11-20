@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/goal_providers.dart';
 import '../../../home/presentation/providers/habit_providers.dart';
+import '../../../user_profile_completion/constants/habit_templates.dart';
 
 class GoalDetailPage extends ConsumerWidget {
   final String goalId;
@@ -349,6 +350,8 @@ class GoalDetailPage extends ConsumerWidget {
                                   habit,
                                   DateTime.now(),
                                 );
+                                final template = HabitTemplates.findById(habit.templateId);
+                                final habitName = template?.name ?? habit.description;
                                 return ListTile(
                                   leading: Icon(
                                     isCompleted ? Icons.check_circle : Icons.circle_outlined,
@@ -356,7 +359,7 @@ class GoalDetailPage extends ConsumerWidget {
                                         ? const Color(0xFF90BE6D)
                                         : theme.colorScheme.onSurfaceVariant,
                                   ),
-                                  title: Text(habit.description),
+                                  title: Text(habitName),
                                   trailing: IconButton(
                                     icon: const Icon(Icons.close, size: 20),
                                     onPressed: () {

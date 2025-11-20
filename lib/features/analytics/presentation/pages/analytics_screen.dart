@@ -29,6 +29,7 @@ class AnalyticsScreen extends ConsumerWidget {
           ref.invalidate(heatmapDataProvider);
           ref.invalidate(timeOfDayInsightsProvider);
           ref.invalidate(habitsForDateProvider(today));
+          ref.invalidate(allActiveHabitsProvider);
           // Small delay to ensure data is refreshed
           await Future.delayed(const Duration(milliseconds: 100));
         },
