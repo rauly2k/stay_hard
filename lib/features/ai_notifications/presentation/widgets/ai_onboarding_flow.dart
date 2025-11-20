@@ -254,6 +254,118 @@ class _AIOnboardingFlowState extends ConsumerState<AIOnboardingFlow> {
     );
   }
 
+  void _showPreviewDialog(ArchetypeDetails archetype) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 400),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.3),
+                blurRadius: 20,
+                spreadRadius: 5,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Emoji with pulse effect
+              TweenAnimationBuilder(
+                tween: Tween<double>(begin: 0.8, end: 1.0),
+                duration: const Duration(milliseconds: 1000),
+                curve: Curves.easeInOut,
+                builder: (context, double value, child) {
+                  return Transform.scale(
+                    scale: value,
+                    child: Text(
+                      archetype.emoji,
+                      style: const TextStyle(fontSize: 60),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Archetype name
+              Text(
+                archetype.name.toUpperCase(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // Divider
+              Container(
+                width: 50,
+                height: 2,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(1),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Sample message
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  archetype.sampleMessage,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    height: 1.4,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Close button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Theme.of(context).colorScheme.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text('Got it!'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildArchetypeSelectionScreen() {
     final archetypes = ArchetypeDetails.getAll();
 
@@ -269,6 +381,12 @@ class _AIOnboardingFlowState extends ConsumerState<AIOnboardingFlow> {
               Text(
                 'Pick Your Communication Style',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Tap "Preview" to see a sample message',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -287,6 +405,7 @@ class _AIOnboardingFlowState extends ConsumerState<AIOnboardingFlow> {
                 color: isSelected
                     ? Theme.of(context).colorScheme.primaryContainer
                     : null,
+                elevation: isSelected ? 4 : 1,
                 child: InkWell(
                   onTap: () {
                     setState(() => selectedArchetype = archetype.type);
@@ -331,6 +450,7 @@ class _AIOnboardingFlowState extends ConsumerState<AIOnboardingFlow> {
                               Icon(
                                 Icons.check_circle,
                                 color: Theme.of(context).colorScheme.primary,
+                                size: 24,
                               ),
                           ],
                         ),
@@ -338,6 +458,24 @@ class _AIOnboardingFlowState extends ConsumerState<AIOnboardingFlow> {
                         Text(
                           archetype.description,
                           style: const TextStyle(fontSize: 12),
+                        ),
+                        const SizedBox(height: 12),
+                        // Preview button
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () => _showPreviewDialog(archetype),
+                            icon: const Icon(Icons.visibility, size: 16),
+                            label: const Text('Preview Message'),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              side: BorderSide(
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
