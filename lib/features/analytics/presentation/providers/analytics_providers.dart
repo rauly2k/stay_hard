@@ -9,8 +9,8 @@ final analyticsStatsProvider = Provider.autoDispose<AnalyticsStats>((ref) {
   final today = DateTime.now();
   final thirtyDaysAgo = today.subtract(const Duration(days: 30));
 
-  // Get all habits
-  final habitsAsync = ref.watch(habitsForDateProvider(today));
+  // Get all active habits (not filtered by date)
+  final habitsAsync = ref.watch(allActiveHabitsProvider);
 
   return habitsAsync.when(
     data: (habits) {
@@ -81,7 +81,7 @@ final analyticsStatsProvider = Provider.autoDispose<AnalyticsStats>((ref) {
 /// Provider for heatmap calendar data (365 days)
 final heatmapDataProvider = Provider.autoDispose<Map<String, double>>((ref) {
   final today = DateTime.now();
-  final habitsAsync = ref.watch(habitsForDateProvider(today));
+  final habitsAsync = ref.watch(allActiveHabitsProvider);
 
   return habitsAsync.when(
     data: (habits) {
@@ -126,7 +126,7 @@ final heatmapDataProvider = Provider.autoDispose<Map<String, double>>((ref) {
 final habitAnalyticsProvider = Provider.autoDispose.family<HabitAnalytics, String>(
   (ref, habitId) {
     final today = DateTime.now();
-    final habitsAsync = ref.watch(habitsForDateProvider(today));
+    final habitsAsync = ref.watch(allActiveHabitsProvider);
 
     return habitsAsync.when(
       data: (habits) {
@@ -198,7 +198,7 @@ final habitAnalyticsProvider = Provider.autoDispose.family<HabitAnalytics, Strin
 /// Provider for time-of-day insights
 final timeOfDayInsightsProvider = Provider.autoDispose<TimeOfDayInsights>((ref) {
   final today = DateTime.now();
-  final habitsAsync = ref.watch(habitsForDateProvider(today));
+  final habitsAsync = ref.watch(allActiveHabitsProvider);
 
   return habitsAsync.when(
     data: (habits) {

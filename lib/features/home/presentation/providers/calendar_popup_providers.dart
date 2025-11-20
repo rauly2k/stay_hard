@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/data/models/habit_model.dart';
 import 'habit_providers.dart';
+import '../../../user_profile_completion/constants/habit_templates.dart';
 
 /// Data class for habit details on a specific day
 class HabitDayDetail {
@@ -70,9 +71,11 @@ final habitsForDayDetailProvider = Provider.autoDispose.family<List<HabitDayDeta
 
         for (var habit in habits) {
           if (_shouldShowHabitOnDate(habit, date)) {
+            final template = HabitTemplates.findById(habit.templateId);
+            final habitName = template?.name ?? habit.description;
             habitDetails.add(HabitDayDetail(
               habitId: habit.id,
-              habitName: habit.description,
+              habitName: habitName,
               isCompleted: habit.completionLog[dateKey] == true,
             ));
           }
