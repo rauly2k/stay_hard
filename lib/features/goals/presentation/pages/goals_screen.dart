@@ -75,6 +75,7 @@ class GoalsScreen extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'goals_fab',
         onPressed: () {
           Navigator.push(
             context,

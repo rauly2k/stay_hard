@@ -33,8 +33,12 @@ import 'shared/presentation/widgets/main_shell.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
+  // Load environment variables (fail gracefully if .env doesn't exist)
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    print('Warning: .env file not found. API key must be configured manually.');
+  }
 
   // Initialize Firebase
   await Firebase.initializeApp();

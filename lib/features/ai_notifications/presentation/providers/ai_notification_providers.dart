@@ -171,16 +171,10 @@ final aiNotificationConfigNotifierProvider = StateNotifierProvider.family<
 /// Provider for Gemini API Key
 /// Loads from .env file for secure storage
 final geminiApiKeyProvider = Provider<String>((ref) {
-  // Load from .env file
+  // Load from .env file (returns empty string if not found)
   final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
 
-  if (apiKey.isEmpty) {
-    throw Exception(
-      'GEMINI_API_KEY not found in .env file. '
-      'Please create a .env file with your API key.',
-    );
-  }
-
+  // Return the key (empty if not configured - UI will handle this)
   return apiKey;
 });
 

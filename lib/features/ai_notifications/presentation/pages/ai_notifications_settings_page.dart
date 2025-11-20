@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod/src/framework.dart';
+import 'package:stay_hard/features/ai_notifications/presentation/providers/ai_notification_providers.dart';
 import '../../data/models/notification_intervention_category.dart';
 import '../../data/models/notification_preferences.dart';
 import '../../data/models/archetype_details.dart';
@@ -142,7 +144,7 @@ class _AINotificationsSettingsPageState
   }
 
   Widget _buildAIPersonaSection(ThemeData theme) {
-    final configAsync = ref.watch(aiNotificationConfigProvider);
+    final configAsync = ref.watch(aiNotificationConfigProvider as ProviderListenable);
 
     return configAsync.when(
       data: (config) {

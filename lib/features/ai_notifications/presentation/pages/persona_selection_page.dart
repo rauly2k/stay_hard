@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stay_hard/features/ai_notifications/presentation/providers/ai_notification_providers.dart';
 import '../../data/models/archetype_details.dart';
 import '../../data/models/ai_notification_config.dart';
-import '../providers/notification_preferences_provider.dart';
-import '../providers/ai_notification_providers.dart';
 
 /// Persona Selection Page
 /// Allows users to choose their AI coach personality
@@ -48,19 +47,10 @@ class _PersonaSelectionPageState extends ConsumerState<PersonaSelectionPage> {
 
     try {
       final userId = ref.read(currentUserIdProvider);
-      if (userId == null) {
-        throw Exception('User not logged in');
-      }
-
-      final repository = ref.read(aiNotificationRepositoryProvider);
-      final currentConfig = await repository.getConfig(userId);
-
-      if (currentConfig != null) {
-        final updatedConfig = currentConfig.copyWith(
-          archetype: _selectedArchetype,
-          lastModified: DateTime.now(),
-        );
-        await repository.saveConfig(updatedConfig);
+      if (userId != null && _selectedArchetype != null) {
+        await ref
+            .read(aiNotificationConfigNotifierProvider(userId).notifier)
+            .updateArchetype(_selectedArchetype!);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

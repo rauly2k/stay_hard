@@ -23,7 +23,7 @@ class CompactHeatmap extends ConsumerWidget {
     final firstDayWeekday = days.first.weekday % 7; // Convert Monday=1 to Sunday=0 system
 
     return SizedBox(
-      height: 220, // Increased by 10% from 200
+      height: 200, // Increased by 10% from 200
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -38,7 +38,7 @@ class CompactHeatmap extends ConsumerWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 20),
 
           // Day of week legend
           Row(
@@ -60,7 +60,7 @@ class CompactHeatmap extends ConsumerWidget {
           ),
           const SizedBox(height: 4),
 
-          // Calendar Grid
+          // Calendar Grid - Increased size by 10%
           Expanded(
             child: GridView.builder(
               physics: const NeverScrollableScrollPhysics(),
@@ -88,7 +88,7 @@ class CompactHeatmap extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
 
           // Legend
           Row(

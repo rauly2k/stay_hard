@@ -69,6 +69,7 @@ class AlarmsScreen extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'alarms_fab',
         onPressed: () => _navigateToCreateAlarm(context),
         child: const Icon(Icons.add),
       ),

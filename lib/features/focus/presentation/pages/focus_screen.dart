@@ -70,6 +70,7 @@ class _FocusScreenState extends ConsumerState<FocusScreen> {
       ),
       floatingActionButton: _selectedMode == FocusMode.pomodoro && !hasActiveSession
           ? FloatingActionButton.extended(
+              heroTag: 'focus_fab',
               onPressed: () => _navigateToCreateSession(context),
               icon: const Icon(Icons.add),
               label: const Text('New Session'),

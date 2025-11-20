@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:stay_hard/features/ai_notifications/presentation/providers/ai_notification_providers.dart';
 import '../../../../shared/presentation/providers/user_provider.dart';
 import '../../../goals/presentation/providers/goal_providers.dart';
 import '../../../ai_notifications/data/models/ai_notification_config.dart';
-import '../../../ai_notifications/presentation/providers/notification_preferences_provider.dart';
 import '../../../ai_notifications/data/models/archetype_details.dart';
 
 /// Profile Page - User dashboard
@@ -19,7 +19,7 @@ class ProfilePage extends ConsumerWidget {
     final user = FirebaseAuth.instance.currentUser;
     final userProfileAsync = ref.watch(userProfileProvider);
     final activeGoalsAsync = ref.watch(activeGoalsProvider);
-    final notificationConfigAsync = ref.watch(aiNotificationConfigProvider);
+    final notificationConfigAsync = ref.watch(currentUserAIConfigProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -104,10 +104,9 @@ class ProfilePage extends ConsumerWidget {
                           : null,
                       child: user?.photoURL == null
                           ? Text(
-                              user?.displayName
-                                      ?.substring(0, 1)
-                                      .toUpperCase() ??
-                                  'U',
+                              (user?.displayName?.isNotEmpty == true)
+                                  ? user!.displayName!.substring(0, 1).toUpperCase()
+                                  : 'U',
                               style: TextStyle(
                                 color: theme.colorScheme.onPrimary,
                                 fontSize: 32,

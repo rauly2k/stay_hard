@@ -32,7 +32,9 @@ class ProfileMenuDropdown extends StatelessWidget {
                     radius: 20,
                     backgroundColor: theme.colorScheme.primary,
                     child: Text(
-                      user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
+                      (user?.displayName?.isNotEmpty == true)
+                          ? user!.displayName!.substring(0, 1).toUpperCase()
+                          : 'U',
                       style: TextStyle(
                         color: theme.colorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
