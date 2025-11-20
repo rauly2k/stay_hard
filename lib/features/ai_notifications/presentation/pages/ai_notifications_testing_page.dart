@@ -195,31 +195,42 @@ class _AINotificationsTestingPageState
     NotificationContext context,
     InterventionCategory category,
   ) async {
-    // In a real implementation, this would use the AI service
-    // For now, return a mock message based on archetype
-    await Future.delayed(const Duration(seconds: 2)); // Simulate AI call
+    try {
+      // Use the real AI Message Generator service
+      final generator = ref.read(aiMessageGeneratorProvider);
 
-    final archetypeName = _selectedArchetype.name;
-    final categoryName = category.displayName;
+      final message = await generator.generateMessage(
+        context: context,
+        archetype: _selectedArchetype,
+        intensity: AIIntensity.medium, // Default to medium for testing
+        category: category,
+      );
 
-    // Simple mock messages
-    switch (_selectedArchetype) {
-      case AIArchetype.drillSergeant:
-        return 'SOLDIER! Time to tackle $categoryName! No excuses! 💪';
-      case AIArchetype.friendlyCoach:
-        return 'Hey friend! Let\'s work on $categoryName together! 🌟';
-      case AIArchetype.wiseMentor:
-        return 'As the ancients say, $categoryName is the path to wisdom. 🧘';
-      case AIArchetype.motivationalSpeaker:
-        return 'YOU CAN DO THIS! $categoryName is calling your name! 🔥';
-      case AIArchetype.philosopher:
-        return 'Reflect on $categoryName and its meaning in your journey. 🤔';
-      case AIArchetype.humorousFriend:
-        return 'Time for $categoryName! Don\'t worry, I won\'t tell if you skip... just kidding! 😄';
-      case AIArchetype.competitor:
-        return 'Game time! $categoryName is your next challenge to conquer! 🏆';
-      case AIArchetype.growthGuide:
-        return 'Every step in $categoryName is growth. Embrace the process! 🌱';
+      return message;
+    } catch (e) {
+      // If AI generation fails, return a helpful error message
+      print('AI generation error: $e');
+
+      // Fallback to simple mock messages for testing without API key
+      final categoryName = category.displayName;
+      switch (_selectedArchetype) {
+        case AIArchetype.drillSergeant:
+          return 'SOLDIER! Time to tackle $categoryName! No excuses! 💪';
+        case AIArchetype.friendlyCoach:
+          return 'Hey friend! Let\'s work on $categoryName together! 🌟';
+        case AIArchetype.wiseMentor:
+          return 'As the ancients say, $categoryName is the path to wisdom. 🧘';
+        case AIArchetype.motivationalSpeaker:
+          return 'YOU CAN DO THIS! $categoryName is calling your name! 🔥';
+        case AIArchetype.philosopher:
+          return 'Reflect on $categoryName and its meaning in your journey. 🤔';
+        case AIArchetype.humorousFriend:
+          return 'Time for $categoryName! Don\'t worry, I won\'t tell if you skip... just kidding! 😄';
+        case AIArchetype.competitor:
+          return 'Game time! $categoryName is your next challenge to conquer! 🏆';
+        case AIArchetype.growthGuide:
+          return 'Every step in $categoryName is growth. Embrace the process! 🌱';
+      }
     }
   }
 
@@ -302,6 +313,8 @@ class _AINotificationsTestingPageState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final apiKey = ref.watch(geminiApiKeyProvider);
+    final hasValidApiKey = apiKey != 'YOUR_API_KEY_HERE' && apiKey.isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(
@@ -311,6 +324,44 @@ class _AINotificationsTestingPageState
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // API Key Status Banner
+          if (!hasValidApiKey)
+            Card(
+              color: Colors.orange.shade50,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.warning_amber, color: Colors.orange.shade700),
+                        const SizedBox(width: 8),
+                        Text(
+                          'API Key Required',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.orange.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'To test real AI-generated notifications, you need a Gemini API key.\n\n'
+                      'To add your API key:\n'
+                      '1. Get a free API key from https://makersuite.google.com/app/apikey\n'
+                      '2. Update the geminiApiKeyProvider in ai_notification_providers.dart\n'
+                      '3. Replace "YOUR_API_KEY_HERE" with your actual key\n\n'
+                      'Without an API key, fallback mock messages will be used.',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          if (!hasValidApiKey) const SizedBox(height: 16),
+
           // AI Style Selector
           Card(
             child: Padding(
@@ -345,9 +396,26 @@ class _AINotificationsTestingPageState
                     },
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Habit Context: Using your actual habits',
-                    style: theme.textTheme.bodySmall,
+                  Row(
+                    children: [
+                      Icon(
+                        hasValidApiKey ? Icons.check_circle : Icons.offline_bolt,
+                        size: 16,
+                        color: hasValidApiKey ? Colors.green : Colors.orange,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          hasValidApiKey
+                              ? 'Using real AI generation with your updated prompts'
+                              : 'Using fallback mock messages',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: hasValidApiKey ? Colors.green : Colors.orange,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

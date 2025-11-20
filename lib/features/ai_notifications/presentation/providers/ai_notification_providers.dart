@@ -3,9 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:hive/hive.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../data/models/ai_notification_config.dart';
 import '../../data/repositories/ai_notification_repository_impl.dart';
 import '../../domain/repositories/ai_notification_repository.dart';
+import '../../domain/services/ai_message_generator.dart';
 
 /// Provider for AI Notification Repository
 final aiNotificationRepositoryProvider = Provider<AINotificationRepository>((ref) {
@@ -165,3 +167,25 @@ final aiNotificationConfigNotifierProvider = StateNotifierProvider.family<
     );
   },
 );
+
+/// Provider for Gemini API Key
+/// Loads from .env file for secure storage
+final geminiApiKeyProvider = Provider<String>((ref) {
+  // Load from .env file
+  final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
+
+  if (apiKey.isEmpty) {
+    throw Exception(
+      'GEMINI_API_KEY not found in .env file. '
+      'Please create a .env file with your API key.',
+    );
+  }
+
+  return apiKey;
+});
+
+/// Provider for AI Message Generator
+final aiMessageGeneratorProvider = Provider<AIMessageGenerator>((ref) {
+  final apiKey = ref.watch(geminiApiKeyProvider);
+  return AIMessageGenerator(apiKey: apiKey);
+});

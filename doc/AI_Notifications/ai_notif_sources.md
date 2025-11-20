@@ -773,7 +773,3 @@ Also use injecting context
 - User Goal: {{linked_goal_name}}
 - Difficulty Level: {{difficulty_level}}
 
-[TASK]
-Generate a short, punchy notification (under 140 chars) urging the user to complete {{habit_name}}. Use the specific tone of the persona. Reference their streak if it's high (>3). Reference their goal explicitly.
-
-(example)
