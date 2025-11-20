@@ -112,46 +112,95 @@ class ProfileMenuDropdown extends StatelessWidget {
           ),
         ),
 
-        // Subscription
-        const PopupMenuItem<String>(
+        // Subscription (Coming Soon)
+        PopupMenuItem<String>(
           value: 'subscription',
           child: ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.card_membership),
-            title: Text('Subscription'),
+            leading: const Icon(Icons.card_membership),
+            title: Row(
+              children: [
+                const Text('Subscription'),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    'Coming Soon',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             dense: true,
           ),
         ),
 
-        // Statistics & Analytics
-        const PopupMenuItem<String>(
-          value: 'analytics',
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.bar_chart),
-            title: Text('Statistics & Analytics'),
-            dense: true,
-          ),
-        ),
-
-        // Help & Support
-        const PopupMenuItem<String>(
+        // Help & Support (Coming Soon)
+        PopupMenuItem<String>(
           value: 'help',
           child: ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.help_outline),
-            title: Text('Help & Support'),
+            leading: const Icon(Icons.help_outline),
+            title: Row(
+              children: [
+                const Text('Help & Support'),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    'Coming Soon',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             dense: true,
           ),
         ),
 
         // About & Privacy
-        const PopupMenuItem<String>(
+        PopupMenuItem<String>(
           value: 'about',
           child: ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.info_outline),
-            title: Text('About & Privacy'),
+            leading: const Icon(Icons.info_outline),
+            title: Row(
+              children: [
+                const Text('About & Privacy'),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    'Coming Soon',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             dense: true,
           ),
         ),
@@ -185,15 +234,11 @@ class ProfileMenuDropdown extends StatelessWidget {
   void _handleMenuAction(BuildContext context, String action) {
     switch (action) {
       case 'profile':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile page coming soon!')),
-        );
+        context.push('/profile');
         break;
 
       case 'settings':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Settings page coming soon!')),
-        );
+        context.push('/settings');
         break;
 
       case 'ai-notifications':
@@ -202,20 +247,13 @@ class ProfileMenuDropdown extends StatelessWidget {
 
       case 'subscription':
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Subscription page coming soon!')),
-        );
-        break;
-
-      case 'analytics':
-        // Analytics is already in the bottom nav, could navigate there
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Check the Analytics tab!')),
+          const SnackBar(content: Text('Premium features coming soon!')),
         );
         break;
 
       case 'help':
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Help & Support coming soon!')),
+          const SnackBar(content: Text('Help center coming soon!')),
         );
         break;
 

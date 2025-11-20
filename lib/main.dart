@@ -22,7 +22,10 @@ import 'features/ai_notifications/data/models/notification_intervention_category
 import 'features/ai_notifications/data/models/notification_preferences.dart';
 import 'features/ai_notifications/presentation/pages/ai_notifications_settings_page.dart';
 import 'features/ai_notifications/presentation/pages/ai_notifications_testing_page.dart';
+import 'features/ai_notifications/presentation/pages/persona_selection_page.dart';
 import 'features/home/presentation/pages/edit_habit_page.dart';
+import 'features/profile/presentation/pages/profile_page.dart';
+import 'features/profile/presentation/pages/settings_page.dart';
 import 'shared/data/models/alarm_model.dart';
 import 'shared/data/models/habit_model.dart';
 import 'shared/presentation/widgets/main_shell.dart';
@@ -235,6 +238,16 @@ final _router = GoRouter(
       },
     ),
 
+    // Profile Routes
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfilePage(),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsPage(),
+    ),
+
     // AI Notifications Routes
     GoRoute(
       path: '/ai-notifications/settings',
@@ -243,6 +256,10 @@ final _router = GoRouter(
     GoRoute(
       path: '/ai-notifications/test',
       builder: (context, state) => const AINotificationsTestingPage(),
+    ),
+    GoRoute(
+      path: '/ai-notifications/persona-select',
+      builder: (context, state) => const PersonaSelectionPage(),
     ),
   ],
 
