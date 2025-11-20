@@ -23,7 +23,7 @@ class CompactHeatmap extends ConsumerWidget {
     final firstDayWeekday = days.first.weekday % 7; // Convert Monday=1 to Sunday=0 system
 
     return SizedBox(
-      height: 200, // Match the divider height in hero_graphic.dart
+      height: 220, // Increased by 10% from 200
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,

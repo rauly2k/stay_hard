@@ -18,6 +18,7 @@ import '../widgets/add_habit_choice_dialog.dart';
 import '../widgets/enhanced_habit_card.dart';
 import '../widgets/hero_graphic.dart';
 import '../widgets/horizontal_calendar.dart';
+import '../widgets/calendar_detail_dialog.dart';
 import 'habit_detail_page.dart';
 import 'edit_habit_page.dart';
 
@@ -178,6 +179,15 @@ class _HomePageState extends ConsumerState<HomePage>
     }
   }
 
+  void _showCalendarDetailDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => CalendarDetailDialog(
+        initialDate: ref.read(selectedDateProvider),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final selectedDate = ref.watch(selectedDateProvider);
@@ -204,7 +214,7 @@ class _HomePageState extends ConsumerState<HomePage>
           children: [
             // Top horizontal calendar
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
                 boxShadow: [
@@ -215,11 +225,25 @@ class _HomePageState extends ConsumerState<HomePage>
                   ),
                 ],
               ),
-              child: HorizontalCalendar(
-                selectedDate: selectedDate,
-                onDateSelected: (date) {
-                  ref.read(selectedDateProvider.notifier).setDate(date);
-                },
+              child: Row(
+                children: [
+                  // Calendar icon button
+                  IconButton(
+                    onPressed: _showCalendarDetailDialog,
+                    icon: const Icon(Icons.calendar_month),
+                    tooltip: 'View Calendar',
+                    color: theme.colorScheme.primary,
+                  ),
+                  // Horizontal calendar
+                  Expanded(
+                    child: HorizontalCalendar(
+                      selectedDate: selectedDate,
+                      onDateSelected: (date) {
+                        ref.read(selectedDateProvider.notifier).setDate(date);
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -315,7 +339,7 @@ class _HomePageState extends ConsumerState<HomePage>
       ),
       data: (habits) {
         // Filter habits by time of day if specified
-        final filteredHabits = timeFilter != null
+        var filteredHabits = timeFilter != null
             ? habits
                 .where((habit) =>
                     habit.timeOfDay.contains(timeFilter) ||
@@ -326,6 +350,17 @@ class _HomePageState extends ConsumerState<HomePage>
         if (filteredHabits.isEmpty) {
           return _buildAIEmptyState(timeFilter);
         }
+
+        // Sort habits: incomplete first, completed last
+        final completionService = ref.read(habitCompletionProvider);
+        final selectedDate = ref.read(selectedDateProvider);
+        filteredHabits.sort((a, b) {
+          final aCompleted = completionService.isHabitCompleted(a, selectedDate);
+          final bCompleted = completionService.isHabitCompleted(b, selectedDate);
+          if (aCompleted && !bCompleted) return 1; // a goes after b
+          if (!aCompleted && bCompleted) return -1; // a goes before b
+          return 0; // keep original order
+        });
 
         // Fetch goals for linking
         final userId = FirebaseAuth.instance.currentUser?.uid;
