@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../analytics/presentation/providers/analytics_providers.dart';
+import 'calendar_popup_dialog.dart';
 
 class CompactHeatmap extends ConsumerWidget {
   const CompactHeatmap({super.key});
@@ -22,9 +23,17 @@ class CompactHeatmap extends ConsumerWidget {
     // Calculate the day of week for the first day (0 = Sunday, 6 = Saturday)
     final firstDayWeekday = days.first.weekday % 7; // Convert Monday=1 to Sunday=0 system
 
-    return SizedBox(
-      height: 200, // Increased by 10% from 200
-      child: Column(
+    return InkWell(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => const CalendarPopupDialog(),
+        );
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox(
+        height: 200, // Increased by 10% from 200
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -122,6 +131,7 @@ class CompactHeatmap extends ConsumerWidget {
             ],
           ),
         ],
+      ),
       ),
     );
   }
