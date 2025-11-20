@@ -20,10 +20,10 @@ class HorizontalCalendar extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Use a more compact height to fit better with 7 days visible
+        // Use a more compact height to fit better with 7 days visible (reduced by 30%)
         final calendarHeight = math.max(
-          MediaQuery.of(context).size.height * 0.12,
-          100.0,
+          MediaQuery.of(context).size.height * 0.084,
+          70.0,
         );
 
         return SizedBox(

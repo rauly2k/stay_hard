@@ -19,8 +19,11 @@ class CompactHeatmap extends ConsumerWidget {
       days.add(today.subtract(Duration(days: i)));
     }
 
+    // Calculate the day of week for the first day (0 = Sunday, 6 = Saturday)
+    final firstDayWeekday = days.first.weekday % 7; // Convert Monday=1 to Sunday=0 system
+
     return SizedBox(
-      height: 150, // Match the divider height in hero_graphic.dart
+      height: 200, // Match the divider height in hero_graphic.dart
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -35,21 +38,47 @@ class CompactHeatmap extends ConsumerWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
+
+          // Day of week legend
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day) {
+              return Expanded(
+                child: Center(
+                  child: Text(
+                    day,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 8,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 4),
 
           // Calendar Grid
           Expanded(
             child: GridView.builder(
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 6,
+                crossAxisCount: 7, // 7 days per week
                 crossAxisSpacing: 3,
                 mainAxisSpacing: 3,
                 childAspectRatio: 1,
               ),
-              itemCount: 30,
+              itemCount: firstDayWeekday + 30, // Empty cells + actual days
               itemBuilder: (context, index) {
-                final date = days[index];
+                // Empty cells before the first day
+                if (index < firstDayWeekday) {
+                  return Container();
+                }
+
+                final dayIndex = index - firstDayWeekday;
+                final date = days[dayIndex];
                 final dateKey = _formatDateKey(date);
                 final value = heatmapData[dateKey] ?? 0.0;
                 final isToday = _isSameDay(date, today);
@@ -59,7 +88,7 @@ class CompactHeatmap extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
 
           // Legend
           Row(
