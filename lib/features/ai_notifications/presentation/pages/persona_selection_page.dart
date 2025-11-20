@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../data/models/archetype_details.dart';
 import '../../data/models/ai_notification_config.dart';
 import '../providers/notification_preferences_provider.dart';
+import '../providers/ai_notification_providers.dart';
 
 /// Persona Selection Page
 /// Allows users to choose their AI coach personality
@@ -24,7 +25,7 @@ class _PersonaSelectionPageState extends ConsumerState<PersonaSelectionPage> {
     super.initState();
     // Load current archetype
     Future.microtask(() {
-      final configAsync = ref.read(aiNotificationConfigProvider);
+      final configAsync = ref.read(currentUserAIConfigProvider);
       configAsync.whenData((config) {
         if (config != null && mounted) {
           setState(() {
@@ -46,15 +47,20 @@ class _PersonaSelectionPageState extends ConsumerState<PersonaSelectionPage> {
     setState(() => _isLoading = true);
 
     try {
-      final currentConfig = await ref.read(aiNotificationConfigProvider.future);
+      final userId = ref.read(currentUserIdProvider);
+      if (userId == null) {
+        throw Exception('User not logged in');
+      }
+
+      final repository = ref.read(aiNotificationRepositoryProvider);
+      final currentConfig = await repository.getConfig(userId);
+
       if (currentConfig != null) {
         final updatedConfig = currentConfig.copyWith(
           archetype: _selectedArchetype,
           lastModified: DateTime.now(),
         );
-        await ref
-            .read(aiNotificationConfigProvider.notifier)
-            .updateConfig(updatedConfig);
+        await repository.saveConfig(updatedConfig);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
+import '../providers/habit_providers.dart';
 
-class HorizontalCalendar extends StatelessWidget {
+class HorizontalCalendar extends ConsumerWidget {
   final DateTime selectedDate;
   final Function(DateTime) onDateSelected;
+  final VoidCallback? onCalendarTap;
 
   const HorizontalCalendar({
     super.key,
     required this.selectedDate,
     required this.onDateSelected,
+    this.onCalendarTap,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final today = DateTime.now();
     final List<DateTime> dates = _generateDates(today);
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Use a more compact height to fit better with 7 days visible (reduced by 30%)
+        // Use a more compact height to fit better with 30 days visible
         final calendarHeight = math.max(
           MediaQuery.of(context).size.height * 0.084,
           70.0,
@@ -32,17 +36,26 @@ class HorizontalCalendar extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             itemCount: dates.length,
+            reverse: true, // Show most recent dates first
             itemBuilder: (context, index) {
               final date = dates[index];
               final isSelected = _isSameDay(date, selectedDate);
               final isToday = _isSameDay(date, today);
+              final isPast = date.isBefore(today) && !isToday;
+
+              // Get habit stats for this date
+              final habitStats = ref.watch(habitStatsProvider(date));
+              final isCompleted = habitStats.total > 0 && habitStats.completed == habitStats.total;
 
               return _buildDateItem(
                 context,
+                ref,
                 theme,
                 date,
                 isSelected: isSelected,
                 isToday: isToday,
+                isPast: isPast,
+                isCompleted: isCompleted,
               );
             },
           ),
@@ -53,10 +66,13 @@ class HorizontalCalendar extends StatelessWidget {
 
   Widget _buildDateItem(
     BuildContext context,
+    WidgetRef ref,
     ThemeData theme,
     DateTime date, {
     required bool isSelected,
     required bool isToday,
+    required bool isPast,
+    required bool isCompleted,
   }) {
     return GestureDetector(
       onTap: () => onDateSelected(date),
@@ -108,28 +124,57 @@ class HorizontalCalendar extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 1),
-            // "Today" indicator
-            if (isToday)
-              Container(
-                width: 5,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? theme.colorScheme.onPrimary
-                      : theme.colorScheme.primary,
-                  shape: BoxShape.circle,
-                ),
-              ),
+            // Indicator: Fire emoji for completed days, white circle for today
+            _buildDayIndicator(
+              theme,
+              isToday: isToday,
+              isPast: isPast,
+              isCompleted: isCompleted,
+              isSelected: isSelected,
+            ),
           ],
         ),
       ),
     );
   }
 
-  /// Generate a list of dates centered around today (3 days before, today, 3 days after)
+  Widget _buildDayIndicator(
+    ThemeData theme, {
+    required bool isToday,
+    required bool isPast,
+    required bool isCompleted,
+    required bool isSelected,
+  }) {
+    // Show fire emoji for completed days (past or today)
+    if (isCompleted) {
+      return const Text(
+        '🔥',
+        style: TextStyle(fontSize: 12),
+      );
+    }
+
+    // Show white circle for today (when not completed)
+    if (isToday) {
+      return Container(
+        width: 5,
+        height: 5,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? theme.colorScheme.onPrimary
+              : theme.colorScheme.primary,
+          shape: BoxShape.circle,
+        ),
+      );
+    }
+
+    // No indicator for past incomplete days
+    return const SizedBox(height: 5);
+  }
+
+  /// Generate a list of last 30 days (today and 29 days before)
   List<DateTime> _generateDates(DateTime today) {
     final List<DateTime> dates = [];
-    for (int i = -3; i <= 3; i++) {
+    for (int i = 0; i >= -29; i--) {
       dates.add(today.add(Duration(days: i)));
     }
     return dates;
