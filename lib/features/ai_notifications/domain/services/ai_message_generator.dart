@@ -1,32 +1,55 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../../data/models/ai_notification_config.dart';
+import '../../data/models/notification_intervention_category.dart';
+import '../../data/repositories/persona_repository.dart';
+import 'prompt_builder.dart';
 
 /// Service for generating AI messages using Gemini API
+/// Enhanced with comprehensive persona system and prompt engineering
+/// Based on AI_PERSONA_ENHANCEMENT_IMPLEMENTATION.md Phase 3
 class AIMessageGenerator {
   final GenerativeModel _model;
   final Map<String, String> _messageCache = {};
+  final PromptBuilder _promptBuilder;
+  final PersonaRepository _personaRepository;
 
-  AIMessageGenerator({required String apiKey})
-      : _model = GenerativeModel(
+  AIMessageGenerator({
+    required String apiKey,
+    PromptBuilder? promptBuilder,
+    PersonaRepository? personaRepository,
+  })  : _model = GenerativeModel(
           model: 'gemini-pro',
           apiKey: apiKey,
-        );
+        ),
+        _promptBuilder = promptBuilder ?? PromptBuilder(),
+        _personaRepository = personaRepository ?? PersonaRepository();
 
   /// Generate a personalized notification message
+  /// Now uses enhanced prompt engineering with persona-specific training data
   Future<String> generateMessage({
     required NotificationContext context,
     required AIArchetype archetype,
     required AIIntensity intensity,
+    InterventionCategory? category,
   }) async {
+    // Determine intervention category from scenario if not provided
+    final interventionCategory =
+        category ?? _mapScenarioToCategory(context.scenario);
+
     // Check cache first
-    final cacheKey = _buildCacheKey(context, archetype);
+    final cacheKey =
+        _buildCacheKey(context, archetype, interventionCategory);
     if (_messageCache.containsKey(cacheKey)) {
       return _messageCache[cacheKey]!;
     }
 
     try {
-      // Build prompt
-      final prompt = _buildPrompt(context, archetype, intensity);
+      // Build comprehensive prompt using PromptBuilder
+      final prompt = _promptBuilder.buildPrompt(
+        archetype: archetype,
+        context: context,
+        category: interventionCategory,
+      );
 
       // Call Gemini API
       final response = await _model.generateContent([Content.text(prompt)]);
@@ -43,8 +66,31 @@ class AIMessageGenerator {
       return message;
     } catch (e) {
       print('Error generating AI message: $e');
-      // Fallback to pre-generated message
-      return _getFallbackMessage(context, archetype);
+      // Fallback to pre-generated template message
+      return _getFallbackMessage(context, archetype, interventionCategory);
+    }
+  }
+
+  /// Map NotificationScenario to InterventionCategory
+  InterventionCategory _mapScenarioToCategory(NotificationScenario scenario) {
+    switch (scenario) {
+      case NotificationScenario.morningMotivation:
+        return InterventionCategory.morningMotivation;
+      case NotificationScenario.middayCheckIn:
+      case NotificationScenario.eveningReflection:
+        return InterventionCategory.eveningCheckIn;
+      case NotificationScenario.streakMilestone:
+        return InterventionCategory.streakCelebration;
+      case NotificationScenario.streakRecovery:
+        return InterventionCategory.missedHabitRecovery;
+      case NotificationScenario.urgentAccountability:
+        return InterventionCategory.missedHabitRecovery;
+      case NotificationScenario.celebration:
+        return InterventionCategory.streakCelebration;
+      case NotificationScenario.encouragement:
+        return InterventionCategory.lowMoraleBoost;
+      default:
+        return InterventionCategory.morningMotivation;
     }
   }
 
@@ -181,18 +227,34 @@ Message:
   }
 
   /// Build cache key
-  String _buildCacheKey(NotificationContext context, AIArchetype archetype) {
-    return '${archetype.name}_${context.scenario.name}_${context.completedCount}_${context.totalHabitsToday}';
+  String _buildCacheKey(
+    NotificationContext context,
+    AIArchetype archetype,
+    InterventionCategory category,
+  ) {
+    return '${archetype.name}_${category.name}_${context.completedCount}_${context.totalHabitsToday}_${context.currentStreak}';
   }
 
   /// Get fallback message if AI generation fails
+  /// Uses pre-written scenario-specific examples from persona data
   String _getFallbackMessage(
     NotificationContext context,
     AIArchetype archetype,
+    InterventionCategory category,
   ) {
+    // Try to get a random example from persona repository
+    final example = _personaRepository.getRandomScenarioExample(
+      archetype,
+      category,
+    );
+
+    if (example != null) {
+      return example;
+    }
+
+    // Final fallback to generic messages
     final completionPercentage = context.completionPercentage * 100;
 
-    // Simple fallback messages per archetype
     switch (archetype) {
       case AIArchetype.drillSergeant:
         if (context.completedCount == 0) {
