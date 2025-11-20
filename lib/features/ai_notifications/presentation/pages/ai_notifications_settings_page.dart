@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/models/notification_intervention_category.dart';
 import '../../data/models/notification_preferences.dart';
+import '../../data/models/archetype_details.dart';
 import '../providers/notification_preferences_provider.dart';
 
 /// AI Notifications Settings Page
@@ -83,6 +84,10 @@ class _AINotificationsSettingsPageState
           _buildMasterControlsSection(theme),
           const SizedBox(height: 24),
 
+          // AI Persona & Style Section (NEW - PROMINENT)
+          _buildAIPersonaSection(theme),
+          const SizedBox(height: 24),
+
           // Notification Preferences Section
           _buildNotificationPreferencesSection(theme),
           const SizedBox(height: 24),
@@ -130,23 +135,126 @@ class _AINotificationsSettingsPageState
                 );
               },
             ),
-            const Divider(),
-            ListTile(
-              title: const Text('AI Style'),
-              subtitle: const Text('Configure in main Settings'),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {
-                // Navigate to main settings page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('AI Style is configured in main Settings'),
-                  ),
-                );
-              },
-            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildAIPersonaSection(ThemeData theme) {
+    final configAsync = ref.watch(aiNotificationConfigProvider);
+
+    return configAsync.when(
+      data: (config) {
+        final archetypeDetails = config != null
+            ? ArchetypeDetails.getForType(config.archetype)
+            : null;
+
+        return Card(
+          color: theme.colorScheme.primaryContainer,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.psychology, color: theme.colorScheme.primary),
+                    const SizedBox(width: 8),
+                    Text(
+                      'AI Persona & Style',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onPrimaryContainer,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                if (archetypeDetails != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          archetypeDetails.emoji,
+                          style: const TextStyle(fontSize: 40),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                archetypeDetails.name,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                archetypeDetails.tagline,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  fontStyle: FontStyle.italic,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    archetypeDetails.description,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: () {
+                        context.push('/ai-notifications/persona-select');
+                      },
+                      icon: const Icon(Icons.swap_horiz),
+                      label: const Text('Change Style'),
+                    ),
+                  ),
+                ] else ...[
+                  Text(
+                    'No persona selected yet',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  FilledButton.icon(
+                    onPressed: () {
+                      context.push('/ai-notifications/persona-select');
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('Select Persona'),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+      loading: () => const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 
