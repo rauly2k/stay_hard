@@ -25,8 +25,11 @@ class _AINotificationsSettingsPageState
     super.initState();
     // Initialize with current preferences or defaults
     final currentPrefs = ref.read(notificationPreferencesProvider);
-    _preferences = currentPrefs.valueOrNull ??
-        NotificationPreferences.defaultPreferences('user-id');
+    _preferences = currentPrefs.when(
+      data: (prefs) => prefs,
+      loading: () => NotificationPreferences.defaultPreferences('user-id'),
+      error: (error, stack) => NotificationPreferences.defaultPreferences('user-id'),
+    );
   }
 
   void _updatePreferences(NotificationPreferences newPrefs) {

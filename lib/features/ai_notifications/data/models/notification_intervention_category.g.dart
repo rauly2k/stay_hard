@@ -6,6 +6,46 @@ part of 'notification_intervention_category.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
+class CategoryPreferencesAdapter extends TypeAdapter<CategoryPreferences> {
+  @override
+  final int typeId = 17;
+
+  @override
+  CategoryPreferences read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return CategoryPreferences(
+      category: fields[0] as InterventionCategory,
+      enabled: fields[1] as bool,
+      customSettings: (fields[2] as Map).cast<String, dynamic>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, CategoryPreferences obj) {
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.category)
+      ..writeByte(1)
+      ..write(obj.enabled)
+      ..writeByte(2)
+      ..write(obj.customSettings);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CategoryPreferencesAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
 class InterventionCategoryAdapter extends TypeAdapter<InterventionCategory> {
   @override
   final int typeId = 16;
@@ -66,46 +106,6 @@ class InterventionCategoryAdapter extends TypeAdapter<InterventionCategory> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is InterventionCategoryAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
-}
-
-class CategoryPreferencesAdapter extends TypeAdapter<CategoryPreferences> {
-  @override
-  final int typeId = 17;
-
-  @override
-  CategoryPreferences read(BinaryReader reader) {
-    final numOfFields = reader.readByte();
-    final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
-    return CategoryPreferences(
-      category: fields[0] as InterventionCategory,
-      enabled: fields[1] as bool,
-      customSettings: (fields[2] as Map).cast<String, dynamic>(),
-    );
-  }
-
-  @override
-  void write(BinaryWriter writer, CategoryPreferences obj) {
-    writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.category)
-      ..writeByte(1)
-      ..write(obj.enabled)
-      ..writeByte(2)
-      ..write(obj.customSettings);
-  }
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is CategoryPreferencesAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

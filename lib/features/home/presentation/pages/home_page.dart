@@ -204,7 +204,7 @@ class _HomePageState extends ConsumerState<HomePage>
           children: [
             // Top horizontal calendar
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
                 boxShadow: [

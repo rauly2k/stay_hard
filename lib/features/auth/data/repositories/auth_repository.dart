@@ -29,12 +29,23 @@ abstract class AuthRepository {
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
+  bool _isInitialized = false;
 
   AuthRepositoryImpl({
     FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
+
+  Future<void> _ensureInitialized() async {
+    if (!_isInitialized) {
+      await _googleSignIn.initialize(
+        // Use the web client ID from google-services.json for server auth
+        serverClientId: '354041009676-jd28jhgjkvr1iteg9f32drcl27k6kmhc.apps.googleusercontent.com',
+      );
+      _isInitialized = true;
+    }
+  }
 
   @override
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
@@ -45,7 +56,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<UserCredential> signInWithGoogle() async {
     try {
-      await GoogleSignIn.instance.initialize();
+      // Ensure GoogleSignIn is initialized
+      await _ensureInitialized();
+
       // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate();
 
@@ -54,11 +67,10 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final googleAuthorization = await googleUser.authorizationClient.authorizationForScopes(['email']);
-      // Create a new credential
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+
+      // Create a new credential using the id token
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuthorization?.accessToken,
         idToken: googleAuth.idToken,
       );
 
@@ -113,9 +125,12 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> signOut() async {
     try {
+      // Ensure GoogleSignIn is initialized before signing out
+      await _ensureInitialized();
+
       await Future.wait([
         _firebaseAuth.signOut(),
-        _googleSignIn.signOut(),
+        _googleSignIn.disconnect(),
       ]);
     } catch (e) {
       throw Exception('Failed to sign out: $e');

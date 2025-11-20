@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../../data/models/notification_preferences.dart';
-import '../../domain/repositories/notification_preferences_repository.dart';
 
 /// Provider for notification preferences repository
 final notificationPreferencesRepositoryProvider =

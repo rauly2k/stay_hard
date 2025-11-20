@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/focus_providers.dart';
-import '../../../../shared/data/models/focus_session_model.dart';
+import '../../../../shared/data/models/focus_session_model.dart' hide FocusMode;
 import '../widgets/focus_session_card.dart';
 import '../widgets/active_session_widget.dart';
 import '../widgets/permissions_check_widget.dart';
@@ -23,7 +23,6 @@ class _FocusScreenState extends ConsumerState<FocusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final sessionsAsync = ref.watch(focusSessionsProvider);
     final hasActiveSession = sessionsAsync.maybeWhen(
       data: (sessions) => sessions.any((s) => s.status == FocusSessionStatus.active),
@@ -112,7 +111,7 @@ class _FocusScreenState extends ConsumerState<FocusScreen> {
                 return const SizedBox.shrink();
               },
               loading: () => const SizedBox.shrink(),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (error, stack) => const SizedBox.shrink(),
             ),
 
             // Sessions content
@@ -232,8 +231,6 @@ class _FocusScreenState extends ConsumerState<FocusScreen> {
   }
 
   Widget _buildSessionCard(FocusSession session) {
-    final theme = Theme.of(context);
-
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
@@ -245,9 +242,9 @@ class _FocusScreenState extends ConsumerState<FocusScreen> {
               ? Colors.green
               : Colors.red,
         ),
-        title: Text(session.label ?? 'Focus Session'),
+        title: Text(session.name),
         subtitle: Text(
-          '${session.duration ~/ 60} minutes • ${_formatDate(session.startTime)}',
+          '${session.duration.inMinutes} minutes${session.startTime != null ? ' • ${_formatDate(session.startTime!)}' : ''}',
         ),
       ),
     );

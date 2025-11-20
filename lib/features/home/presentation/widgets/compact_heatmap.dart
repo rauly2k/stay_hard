@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import '../../../analytics/presentation/providers/analytics_providers.dart';
 
 class CompactHeatmap extends ConsumerWidget {
@@ -11,169 +12,162 @@ class CompactHeatmap extends ConsumerWidget {
     final heatmapData = ref.watch(heatmapDataProvider);
 
     final today = DateTime.now();
-    final thirtyDaysAgo = today.subtract(const Duration(days: 29)); // Include today
 
-    // Group by weeks (4-5 weeks)
-    final weeks = <List<DateTime>>[];
-    DateTime currentDate = thirtyDaysAgo;
-
-    while (currentDate.isBefore(today) || currentDate.isAtSameMomentAs(today)) {
-      final weekStart = currentDate.subtract(Duration(days: currentDate.weekday - 1));
-      final week = <DateTime>[];
-
-      for (var i = 0; i < 7; i++) {
-        final date = weekStart.add(Duration(days: i));
-        if (!date.isBefore(thirtyDaysAgo) &&
-            !date.isAfter(today)) {
-          week.add(date);
-        }
-      }
-
-      if (week.isNotEmpty) {
-        weeks.add(week);
-        currentDate = week.last.add(const Duration(days: 1));
-      } else {
-        break;
-      }
+    // Generate list of last 30 days
+    final days = <DateTime>[];
+    for (int i = 29; i >= 0; i--) {
+      days.add(today.subtract(Duration(days: i)));
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          'Last 30 Days',
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: Colors.white.withValues(alpha: 0.9),
-            fontSize: 9,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Day labels
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _buildDayLabel(theme, 'M'),
-                _buildDayLabel(theme, 'W'),
-                _buildDayLabel(theme, 'F'),
-              ],
-            ),
-            const SizedBox(width: 4),
-            // Heatmap grid
-            Flexible(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: weeks.map((week) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 2),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(7, (dayIndex) {
-                        if (dayIndex >= week.length) {
-                          return const SizedBox(width: 8, height: 8);
-                        }
-
-                        final date = week[dayIndex];
-                        final dateKey = _formatDateKey(date);
-                        final value = heatmapData[dateKey] ?? 0.0;
-
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 2),
-                          child: _buildHeatmapCell(theme, value, date),
-                        );
-                      }),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        // Legend
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Less',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: Colors.white.withValues(alpha: 0.7),
-                fontSize: 7,
-              ),
-            ),
-            const SizedBox(width: 3),
-            _buildHeatmapCell(theme, 0.0, null, isLegend: true),
-            const SizedBox(width: 1.5),
-            _buildHeatmapCell(theme, 0.3, null, isLegend: true),
-            const SizedBox(width: 1.5),
-            _buildHeatmapCell(theme, 0.6, null, isLegend: true),
-            const SizedBox(width: 1.5),
-            _buildHeatmapCell(theme, 1.0, null, isLegend: true),
-            const SizedBox(width: 3),
-            Text(
-              'More',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: Colors.white.withValues(alpha: 0.7),
-                fontSize: 7,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDayLabel(ThemeData theme, String label) {
     return SizedBox(
-      height: 10,
-      child: Text(
-        label,
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: Colors.white.withValues(alpha: 0.7),
-          fontSize: 7,
-        ),
+      height: 150, // Match the divider height in hero_graphic.dart
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Title
+          Text(
+            'Last 30 Days',
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Calendar Grid
+          Expanded(
+            child: GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 6,
+                crossAxisSpacing: 3,
+                mainAxisSpacing: 3,
+                childAspectRatio: 1,
+              ),
+              itemCount: 30,
+              itemBuilder: (context, index) {
+                final date = days[index];
+                final dateKey = _formatDateKey(date);
+                final value = heatmapData[dateKey] ?? 0.0;
+                final isToday = _isSameDay(date, today);
+
+                return _buildDayCell(theme, date, value, isToday);
+              },
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          // Legend
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Low',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 8,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(width: 4),
+              _buildLegendDot(Colors.red.withValues(alpha: 0.7)),
+              const SizedBox(width: 2),
+              _buildLegendDot(Colors.orange.withValues(alpha: 0.8)),
+              const SizedBox(width: 2),
+              _buildLegendDot(Colors.yellow.withValues(alpha: 0.85)),
+              const SizedBox(width: 2),
+              _buildLegendDot(Colors.green.withValues(alpha: 0.9)),
+              const SizedBox(width: 4),
+              Text(
+                'High',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 8,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildHeatmapCell(
-    ThemeData theme,
-    double value,
-    DateTime? date, {
-    bool isLegend = false,
-  }) {
-    final size = isLegend ? 6.0 : 8.0;
-
-    Color color;
-    if (value == 0.0) {
-      color = Colors.white.withValues(alpha: 0.15);
-    } else if (value < 0.3) {
-      color = Colors.white.withValues(alpha: 0.3);
-    } else if (value < 0.6) {
-      color = Colors.white.withValues(alpha: 0.5);
-    } else if (value < 0.9) {
-      color = Colors.white.withValues(alpha: 0.7);
+  Widget _buildDayCell(ThemeData theme, DateTime date, double value, bool isToday) {
+    Color backgroundColor;
+    if (isToday) {
+      // Today is always white regardless of completion
+      backgroundColor = Colors.white;
+    } else if (value == 0.0) {
+      backgroundColor = Colors.white.withValues(alpha: 0.15);
+    } else if (value < 0.33) {
+      backgroundColor = Colors.red.withValues(alpha: 0.6 + (value * 0.3));
+    } else if (value < 0.67) {
+      final t = (value - 0.33) / 0.34;
+      backgroundColor = Color.lerp(
+        Colors.orange.withValues(alpha: 0.75),
+        Colors.yellow.withValues(alpha: 0.85),
+        t,
+      )!;
     } else {
-      color = Colors.white.withValues(alpha: 0.95);
+      final t = (value - 0.67) / 0.33;
+      backgroundColor = Color.lerp(
+        Colors.yellow.withValues(alpha: 0.85),
+        Colors.green.withValues(alpha: 0.95),
+        t,
+      )!;
     }
 
     return Container(
-      width: size,
-      height: size,
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(1.5),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-          width: 0.5,
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(6),
+        boxShadow: isToday
+            ? [
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 0.4),
+                  blurRadius: 6,
+                  spreadRadius: 2,
+                )
+              ]
+            : null,
+      ),
+      child: Center(
+        child: Text(
+          DateFormat('d').format(date),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: isToday
+                ? Colors.black.withValues(alpha: 0.9)
+                : value > 0.3
+                    ? Colors.black.withValues(alpha: 0.8)
+                    : Colors.white.withValues(alpha: 0.9),
+            fontSize: 10,
+            fontWeight: isToday ? FontWeight.w700 : FontWeight.w600,
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildLegendDot(Color color) {
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+      ),
+    );
+  }
+
+  bool _isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
   }
 
   String _formatDateKey(DateTime date) {

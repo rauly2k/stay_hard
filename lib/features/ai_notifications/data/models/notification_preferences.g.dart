@@ -6,7 +6,8 @@ part of 'notification_preferences.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class NotificationPreferencesAdapter extends TypeAdapter<NotificationPreferences> {
+class NotificationPreferencesAdapter
+    extends TypeAdapter<NotificationPreferences> {
   @override
   final int typeId = 18;
 
@@ -22,7 +23,8 @@ class NotificationPreferencesAdapter extends TypeAdapter<NotificationPreferences
       dailyNotificationLimit: fields[2] as int,
       quietHoursStart: fields[3] as String,
       quietHoursEnd: fields[4] as String,
-      categoryPreferences: (fields[5] as Map).cast<String, CategoryPreferences>(),
+      categoryPreferences:
+          (fields[5] as Map).cast<String, CategoryPreferences>(),
       createdAt: fields[6] as DateTime,
       updatedAt: fields[7] as DateTime?,
     );

@@ -20,17 +20,17 @@ class HorizontalCalendar extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Use 20% of screen height or minimum 120px for better visibility
+        // Use a more compact height to fit better with 7 days visible
         final calendarHeight = math.max(
-          MediaQuery.of(context).size.height * 0.20,
-          120.0,
+          MediaQuery.of(context).size.height * 0.12,
+          100.0,
         );
 
         return SizedBox(
           height: calendarHeight,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             itemCount: dates.length,
             itemBuilder: (context, index) {
               final date = dates[index];
@@ -61,20 +61,20 @@ class HorizontalCalendar extends StatelessWidget {
     return GestureDetector(
       onTap: () => onDateSelected(date),
       child: Container(
-        width: 80,
-        margin: const EdgeInsets.symmetric(horizontal: 6),
+        width: 52,
+        margin: const EdgeInsets.symmetric(horizontal: 3),
         decoration: BoxDecoration(
           color: isSelected
               ? theme.colorScheme.primary
               : isToday
                   ? theme.colorScheme.primaryContainer
                   : theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: isToday && !isSelected
                 ? theme.colorScheme.primary
                 : Colors.transparent,
-            width: 2,
+            width: 1.5,
           ),
         ),
         child: Column(
@@ -90,10 +90,10 @@ class HorizontalCalendar extends StatelessWidget {
                         ? theme.colorScheme.primary
                         : theme.colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
-                fontSize: 14,
+                fontSize: 11,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             // Day number (e.g., "15")
             Text(
               DateFormat('d').format(date),
@@ -104,15 +104,15 @@ class HorizontalCalendar extends StatelessWidget {
                         ? theme.colorScheme.primary
                         : theme.colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
-                fontSize: 20,
+                fontSize: 18,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 1),
             // "Today" indicator
             if (isToday)
               Container(
-                width: 6,
-                height: 6,
+                width: 5,
+                height: 5,
                 decoration: BoxDecoration(
                   color: isSelected
                       ? theme.colorScheme.onPrimary

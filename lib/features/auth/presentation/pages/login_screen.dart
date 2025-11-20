@@ -100,24 +100,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 24),
+                const SizedBox(height: 5),
 
                 // Logo and title
                 Center(
                   child: Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
                     child: Center(
-                      child: Text(
-                        'SH',
-                        style: theme.textTheme.headlineLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                        ),
+                      child: Image.asset(
+                        'assets/images/LOGOWHITE.png',
+                        width: 120,
+                        height: 120,
                       ),
                     ),
                   ),
